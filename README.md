@@ -1,10 +1,8 @@
-static-dvd-site-generator
-=========================
+# Static dvd site generator
 
 Generazione di un sito in html statico a partire da dati in xml per la visione su cd/dvd/usb pen
 
-Dipendenze
-=========
+#### Dipendenze
 
-xslt
+* xslt
 
