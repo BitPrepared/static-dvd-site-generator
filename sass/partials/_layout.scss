@@ -1,0 +1,27 @@
+div[role="container"] {
+	max-width:1024px;
+	align: center;
+}
+
+div[role="main"] {
+	font-size: 0.8em;
+}
+
+.main-content {
+	color: $black;
+	max-width: 738px;
+	background: $white;
+	float: right;
+	padding: 10px;
+	margin-left:15px;
+	margin-right:15px;
+}
+
+em {
+	display: block;
+	margin: 4px;
+}
+
+blockquote {
+	font-style: italic;
+}

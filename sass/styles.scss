@@ -1,0 +1,47 @@
+
+// ====================================================================
+// Imports
+// ====================================================================
+
+@import "compass";
+@import "partials/variables";
+@import "partials/normalize";
+@import "partials/layout";
+@import "partials/header";
+@import "partials/footer";
+@import "partials/sidebar";
+@import "partials/navigation";
+@import "partials/social";
+
+body {
+    
+    font-size: 1em;
+    line-height: 1.4;
+
+	//@include background(image-url("subtlenet2.png"));
+
+    //font-family: "SansationRegular","HelveticaNeue-Light","Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: $bitfont;
+    
+    // Modernizr fallback for when there is no fontface support
+    .no-fontface & {
+        font-size: 1.05em;
+    }
+    
+    background: $verde_melee;
+    color: $white;
+
+}
+
+::-moz-selection {
+    background: $giallo_oro_agesci;
+    text-shadow: none;
+    color: $black;
+}
+
+::selection {
+    background: $giallo_oro_agesci;
+    text-shadow: none;
+    color: $black;
+}
+
