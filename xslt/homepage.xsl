@@ -37,7 +37,40 @@
     <div role="main" class="main-content">
       
       <a href="index.html">    
-        <img src="img/logo_melee.gif" width="760" height="79" border="0" />    
+        <!-- <img src="img/logo_melee.gif" width="760" height="79" border="0" />-->
+        <svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744"
+   height="100"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="New document 1">
+
+    <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Caribbean;-inkscape-font-specification:Caribbean"
+       x="40"
+       y="84.362183"
+       id="text2985"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2987"
+         x="40"
+         y="84.362183">Bit Prepared</tspan></text>
+  </g>
+
+   </svg>
       </a>
 
       <h1 class="headline"> Costigiola <xsl:value-of select="homepage/anno"/> </h1>
