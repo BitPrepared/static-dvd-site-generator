@@ -27,52 +27,108 @@
 <body>
 
   <header role="title">
-      <div>
-        <a href="index.html" style="color:#00000; font-weight:bold;">Isola di Mel&eacute;e</a>
-      </div>
+      
+    <div id="logo" class="logo">
+
+        <svg
+           xmlns:dc="http://purl.org/dc/elements/1.1/"
+           xmlns:cc="http://creativecommons.org/ns#"
+           xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+           xmlns:svg="http://www.w3.org/2000/svg"
+           xmlns="http://www.w3.org/2000/svg" 
+           xmlns:xlink="http://www.w3.org/1999/xlink" 
+           xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+           xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+           width="380"
+           height="100"
+           id="svg2"
+           version="1.1"
+           inkscape:version="0.48.2 r9819"
+           sodipodi:docname="New document 1">
+
+           <a xlink:href="index.html" target="_blank">
+            <g
+             inkscape:label="Layer 1"
+             inkscape:groupmode="layer"
+             id="layer1">
+              <text
+                 xml:space="preserve"
+                 style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Caribbean;-inkscape-font-specification:Caribbean"
+                 x="20"
+                 y="54.362183"
+                 id="text2985"
+                 sodipodi:linespacing="125%">
+                <tspan sodipodi:role="line" id="tspan2987" x="20" y="54.362183">Bit Prepared</tspan>
+              </text>
+            </g>
+          </a>
+
+          <g
+           inkscape:label="Layer 2"
+           inkscape:groupmode="layer"
+           id="layer2">
+            <text
+               xml:space="preserve"
+               style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Caribbean;-inkscape-font-specification:Caribbean"
+               x="40"
+               y="90.362183"
+               id="text2985"
+               sodipodi:linespacing="125%">
+              <tspan sodipodi:role="line" id="tspan2987" x="40" y="90.362183">Isola di Mel&eacute;e</tspan>
+            </text>
+          </g>
+
+        </svg>
+
+
+    </div>
+
+
+    <div id="menu" class="menu">
+
+      <ol>
+        <xsl:for-each select="document('../src/impostazioni.xml')/impostazioni/posizioni/posizione">
+          <xsl:choose>
+            <xsl:when test="domain = 'both'">
+              <xsl:if test="label = 'blog'">
+                <li>
+                  <a href="{path}{nomefile}" target="_blank" alt="{nome}" title="{nome}">
+                    <img src="img/menu/{image}" width="45px" height="60px" alt="{nome}"/>  
+                    <!-- <xsl:value-of select="label"/> -->
+                  </a>
+                </li>
+              </xsl:if>
+              <xsl:if test="label != 'blog'">
+                <li>
+                  <a href="{path}{nomefile}" alt="{nome}" title="{nome}">
+                    <img src="img/menu/{image}" width="45px" height="60px" alt="{nome}" />  
+                    <!-- <xsl:value-of select="label"/> -->
+                  </a>
+                </li>
+              </xsl:if>
+            </xsl:when>
+            <xsl:when test="domain = 'offline'">
+              <li>
+                <a href="{path}{nomefile}" alt="{nome}" title="{nome}">
+                  <img src="img/menu/{image}" width="45px" height="60px" alt="{nome}"/>  
+                  <!-- <xsl:value-of select="label"/> -->
+                </a>
+              </li>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:for-each>
+      </ol>
+
+    </div>
+
   </header>
+
+  <div style="clear:both;"></div>
 
   <div role="container">
 
     <div role="main" class="main-content">
       
-      <a href="index.html">    
-        <!-- <img src="img/logo_melee.gif" width="760" height="79" border="0" />-->
-        <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744"
-   height="100"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.48.2 r9819"
-   sodipodi:docname="New document 1">
-
-    <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1">
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Caribbean;-inkscape-font-specification:Caribbean"
-       x="40"
-       y="84.362183"
-       id="text2985"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan2987"
-         x="40"
-         y="84.362183">Bit Prepared</tspan></text>
-  </g>
-
-   </svg>
-      </a>
-
       <h1 class="headline"> Costigiola <xsl:value-of select="homepage/anno"/> </h1>
       <p>
         <xsl:value-of select="homepage/testosaluto" disable-output-escaping="yes"/>    
@@ -92,7 +148,7 @@
       </blockquote>
 
       <p align="center">
-        <a href="{homepage/foto2}" target="_blank"> <img src="{homepage/foto1}" alt="Foto di Gruppo" border="0" width="650"/> </a>
+        <a href="{homepage/foto2}" target="_blank"> <!-- img src="{homepage/foto1}" alt="Foto di Gruppo" border="0" width="650"/--> </a>
         <em>(clicca sulla foto per ingradirla)</em>
       </p>
       
@@ -103,39 +159,8 @@
 
     </div>
 
-    <div role="sidebar" class="menu">
-      <ol>
-        <xsl:for-each select="document('../src/impostazioni.xml')/impostazioni/posizioni/posizione">
-          <xsl:choose>
-            <xsl:when test="domain = 'both'">
-              <xsl:if test="label = 'blog'">
-                <li>
-                  <a href="{path}{nomefile}" target="_blank" alt="{nome}">
-                    <img src="img/menu/{image}" width="45px" height="60px" alt="{nome}"/>  
-                    <xsl:value-of select="label"/>
-                  </a>
-                </li>
-              </xsl:if>
-              <xsl:if test="label != 'blog'">
-                <li>
-                  <a href="{path}{nomefile}" alt="{nome}">
-                    <img src="img/menu/{image}" width="45px" height="60px" alt="{nome}" />  
-                    <xsl:value-of select="label"/>
-                  </a>
-                </li>
-              </xsl:if>
-            </xsl:when>
-            <xsl:when test="domain = 'offline'">
-              <li>
-                <a href="{path}{nomefile}" alt="{nome}">
-                  <img src="img/menu/{image}" width="45px" height="60px" alt="{nome}"/>  
-                  <xsl:value-of select="label"/>
-                </a>
-              </li>
-            </xsl:when>
-          </xsl:choose>
-        </xsl:for-each>
-      </ol>
+    <div role="sidebar">
+      
     </div>
 
   </div>

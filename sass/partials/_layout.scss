@@ -1,6 +1,7 @@
 div[role="container"] {
 	max-width:1024px;
 	align: center;
+	position: relative;
 }
 
 div[role="main"] {
@@ -8,10 +9,10 @@ div[role="main"] {
 }
 
 .main-content {
-	color: $black;
-	max-width: 738px;
-	background: $white;
-	float: right;
+	color: $white;
+	background: transparent;
+	float: left;
+	top: 600px;
 	padding: 10px;
 	margin-left:15px;
 	margin-right:15px;
