@@ -147,8 +147,20 @@
         <xsl:value-of select="homepage/msgneo" disable-output-escaping="no"/>    
       </blockquote>
 
+
       <p align="center">
-        <a href="{homepage/foto2}" target="_blank"> <!-- img src="{homepage/foto1}" alt="Foto di Gruppo" border="0" width="650"/--> </a>
+        <a href="{homepage/foto2}" target="_blank">
+        <span data-picture="" data-alt="A giant stone face at The Bayon temple in Angkor Thom, Cambodia">
+        <span data-src="img/gruppo/gruppo_low.jpg"></span>
+        <span data-src="img/gruppo/gruppo_400.jpg" data-media="(min-width: 400px)"></span>
+        <span data-src="img/gruppo/gruppo_low.jpg" data-media="(min-width: 800px)"></span>
+        <span data-src="img/gruppo/gruppo_low.jpg" data-media="(min-width: 1000px)"></span>
+        <span data-src="img/gruppo/gruppo_400_retina.jpg" data-media="(min-width: 400px) and (min-device-pixel-ratio: 2.0)"></span> <!-- retina -->
+
+          <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
+          <noscript><img src="img/gruppo/gruppo_low.jpg" alt="A giant stone face at The Bayon temple in Angkor Thom, Cambodia"></img></noscript>
+        </span>
+        </a>
         <em>(clicca sulla foto per ingradirla)</em>
       </p>
       
@@ -168,6 +180,9 @@
   <footer role="contentinfo">
     <p class="copyright">&copy; Bit Prepared, 2013. All rights reserved.</p>
   </footer>
+
+  <script src="js/matchmedia.js"/>
+  <script src="js/picturefill.js"/>
 
 </body>
     </html>

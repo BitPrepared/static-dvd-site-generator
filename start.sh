@@ -4,8 +4,9 @@ echo "clean"
 rm -rf output
 
 echo "copy resources"
-mkdir -p output/img
+mkdir -p output/img output/js
 cp -rv src/img/ output/img/
+cp -rv src/js/ output/js/
 
 echo "Css Generation"
 compass compile
