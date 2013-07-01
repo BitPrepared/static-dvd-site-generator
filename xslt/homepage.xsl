@@ -38,44 +38,36 @@
            xmlns="http://www.w3.org/2000/svg" 
            xmlns:xlink="http://www.w3.org/1999/xlink" 
            xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-           xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-           width="380"
+           width="340"
            height="100"
            id="svg2"
            version="1.1"
-           inkscape:version="0.48.2 r9819"
-           sodipodi:docname="New document 1">
+           sodipodi:docname="Homepage Titolo">
 
-           <a xlink:href="index.html" target="_blank">
-            <g
-             inkscape:label="Layer 1"
-             inkscape:groupmode="layer"
-             id="layer1">
+          <g id="layer1">
+            <a xlink:href="index.html" target="_blank">
               <text
                  xml:space="preserve"
-                 style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Caribbean;-inkscape-font-specification:Caribbean"
-                 x="20"
-                 y="54.362183"
+                 style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+                 x="5"
+                 y="54"
                  id="text2985"
                  sodipodi:linespacing="125%">
-                <tspan sodipodi:role="line" id="tspan2987" x="20" y="54.362183">Bit Prepared</tspan>
+              <tspan
+                   sodipodi:role="line" id="tspan2987" x="5" y="54"
+                   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Caribbean;-inkscape-font-specification:Caribbean">Bit Prepared</tspan>
               </text>
-            </g>
-          </a>
-
-          <g
-           inkscape:label="Layer 2"
-           inkscape:groupmode="layer"
-           id="layer2">
+            </a>     
             <text
                xml:space="preserve"
-               style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Caribbean;-inkscape-font-specification:Caribbean"
-               x="40"
-               y="90.362183"
-               id="text2985"
+               style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+               x="5"
+               y="90"
+               id="text2989"
                sodipodi:linespacing="125%">
-              <tspan sodipodi:role="line" id="tspan2987" x="40" y="90.362183">Isola di Mel&eacute;e</tspan>
-            </text>
+            <tspan
+                 sodipodi:role="line" id="tspan2991" x="5" y="90"
+                 style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Caribbean;-inkscape-font-specification:Caribbean">Costigiola 22 - 26 agosto 2013</tspan></text>
           </g>
 
         </svg>
@@ -129,7 +121,7 @@
 
     <div role="main" class="main-content">
       
-      <h1 class="headline"> Costigiola <xsl:value-of select="homepage/anno"/> </h1>
+      <h1 class="headline"> Isola di Mel&eacute;e <xsl:value-of select="homepage/anno"/> </h1>
       <p>
         <xsl:value-of select="homepage/testosaluto" disable-output-escaping="yes"/>    
       </p>
@@ -151,14 +143,14 @@
       <p align="center">
         <a href="{homepage/foto2}" target="_blank">
         <span data-picture="" data-alt="A giant stone face at The Bayon temple in Angkor Thom, Cambodia">
-        <span data-src="img/gruppo/gruppo_low.jpg"></span>
+        <span data-src="img/gruppo/gruppo_200.jpg"></span>
         <span data-src="img/gruppo/gruppo_400.jpg" data-media="(min-width: 400px)"></span>
-        <span data-src="img/gruppo/gruppo_low.jpg" data-media="(min-width: 800px)"></span>
-        <span data-src="img/gruppo/gruppo_low.jpg" data-media="(min-width: 1000px)"></span>
-        <span data-src="img/gruppo/gruppo_400_retina.jpg" data-media="(min-width: 400px) and (min-device-pixel-ratio: 2.0)"></span> <!-- retina -->
+        <span data-src="img/gruppo/gruppo_800.jpg" data-media="(min-width: 800px)"></span>
+        <span data-src="img/gruppo/gruppo_1000.jpg" data-media="(min-width: 1000px)"></span>
+        <span data-src="img/gruppo/gruppo_200_retina.jpg" data-media="(min-width: 200px) and (min-device-pixel-ratio: 2.0)"></span> <!-- retina -->
 
           <!-- Fallback content for non-JS browsers. Same img src as the initial, unqualified source element. -->
-          <noscript><img src="img/gruppo/gruppo_low.jpg" alt="A giant stone face at The Bayon temple in Angkor Thom, Cambodia"></img></noscript>
+          <noscript><img src="img/gruppo/gruppo_200.jpg" alt="A giant stone face at The Bayon temple in Angkor Thom, Cambodia"></img></noscript>
         </span>
         </a>
         <em>(clicca sulla foto per ingradirla)</em>
