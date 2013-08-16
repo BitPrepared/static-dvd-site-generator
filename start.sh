@@ -49,3 +49,12 @@ compass compile
 
 echo "Homepage"
 java -jar ./lib/saxon9he.jar -o output/index.html src/homepage.xml xslt/homepage.xsl
+
+echo "Indice Fol"
+java -jar ./lib/saxon9he.jar -o output/fol.html src/fol_data.xml xslt/fol_index.xsl
+
+echo "Singole Pagine delle immagini di Fol"
+java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html src/commenti.xml xslt/fol-single-foto.xsl
+
+echo "Singole Pagine delle attivita'/tag di Fol"
+java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html src/tag.xml xslt/fol-tags.xsl
