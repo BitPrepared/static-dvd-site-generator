@@ -9,6 +9,7 @@ div[role="main"] {
 }
 
 .main-content {
+	//border: 1px solid yellow;
 	color: $white;
 	background: transparent;
 	float: left;
@@ -18,21 +19,36 @@ div[role="main"] {
 	margin-right:5px;
 }
 
-.left-content {
+.two-column-left-content {
+	//border: 1px solid red;
+	color: $white;
+	background: transparent;
+	float: left;
+	margin-left:5px;
+	margin-right:5px;	
+	min-width: 100px;
+}
+
+.two-column-main-content {
+	//border: 1px solid yellow;
+	color: $white;
+	background: transparent;
+	float: left;
+	margin-left:5px;
+	margin-right:5px;
+	width: 70%;
+}
+
+.two-column-right-content {
+	//border: 1px solid red;
 	color: $white;
 	background: transparent;
 	float: right;
-	top: 600px;
-	padding: 10px;
 	margin-left:5px;
 	margin-right:5px;	
+	min-width: 100px;
 }
 
-em {
-	display: block;
-	margin: 4px;
-}
-
-blockquote {
-	font-style: italic;
+.clear {
+    clear: both;
 }

@@ -33,6 +33,15 @@ body {
 
 }
 
+em {
+    display: block;
+    margin: 4px;
+}
+
+blockquote {
+    font-style: italic;
+}
+
 ::-moz-selection {
     background: $giallo_oro_agesci;
     text-shadow: none;
@@ -45,3 +54,17 @@ body {
     color: $black;
 }
 
+.fotobook {
+    min-width: 150px;
+}
+
+.foto-in-elenco {
+    float: left;
+    margin: 5px;
+    text-align: center;
+    width: 145px;
+}
+
+.foto-in-elenco img {
+    width: 72px;
+}

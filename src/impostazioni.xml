@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <impostazioni xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<nome>Campo di Competenza Informatica e Tecniche Scout</nome>
 	<posizioni>
 		<posizione>
 			<nome>pagina dati prodotti ragazzi</nome>
@@ -33,8 +34,7 @@
 		<posizione>
 			<nome>FOL diario foto</nome>
 			<label>diario fotografico</label>
-			<path>fol/</path>
-			<nomefile>index.html</nomefile>
+			<nomefile>fol.html</nomefile>
 			<nav_position>4</nav_position>
 			<domain>both</domain>
 			<directory>sito/fol/</directory>

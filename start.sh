@@ -41,8 +41,14 @@ do
 	fi
 done
 
+echo "prepare img dir"
+mkdir -p src/img/{menu,rank}
+
 echo "copy menu"
 cp -rv src/img/menu/* output/img/menu/
+
+echo "copy rank"
+cp -rv src/img/rank/* output/img/rank/
 
 echo "Css Generation"
 compass compile

@@ -47,7 +47,7 @@
                      sodipodi:docname="Homepage Titolo">
 
                     <g id="layer1">
-                      <a xlink:href="index.html" target="_blank">
+                      <a xlink:href="../index.html" target="_blank">
                         <text
                            xml:space="preserve"
                            style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -123,43 +123,44 @@
 
               <h1 class="headline"> Isola di Mel&eacute;e <xsl:value-of select="homepage/anno"/> </h1>
 
-              <div role="main" class="main-content">
-                
+              <div role="main" class="two-column-main-content">
+
                 <!-- FOTO -->
+                <div class="fotobook">                
 
-                <h2>
-                  <xsl:value-of select="nome"/>
-                </h2>
+                  <h2>
+                    <xsl:value-of select="nome"/>
+                  </h2>
 
-                <xsl:for-each select="gruppo/foto">
+                  <xsl:for-each select="gruppo/foto">
 
-                  <div class="pin">
+                    <div class="foto-in-elenco">
 
-                    <a href="{idfile}.html" class="image" style="height: 207px;">
-                      <img alt="{idfile}" src="thu/{idfile}" />
-                    </a>
+                      <a href="{idfile}.html" class="image">
+                        <img alt="{idfile}" src="thu/{idfile}" />
+                      </a>
 
-                    <p class="description" style="font-size:10px;">
-                      <xsl:value-of select="idfile"/>
-                      <br />
-                      <xsl:if test="rank  != ''">
-                        <img src="../../img/star{rank}.gif" />
-                      </xsl:if>
-                    </p>
-                  </div>
+                      <p class="description" style="font-size:10px;">
+                        <xsl:value-of select="idfile"/>
+                        <br />
+                        <xsl:if test="rank  != ''">
+                          <img src="../img/rank/star{rank}.gif" />
+                        </xsl:if>
+                      </p>
+                    </div>
 
-                </xsl:for-each>
+                  </xsl:for-each>
 
+                  <!--div class="clear"/-->
 
-
-
+                </div>
               </div>
 
-              <div role="sidebar" class="left-content">
+              <div role="sidebar" class="two-column-left-content">
 
+
+                <h3>Cloud Tags:</h3>
                 <ul>
-
-                  <li><h3>Cloud Tags:</h3></li>
 
                     <xsl:for-each  select="document('../src/tag.xml')/elenco/tag">
                       <li>
@@ -169,8 +170,10 @@
                       </li>
                     </xsl:for-each>
 
-                
-                  <li> <h3>Cloud Attivit&agrave; :</h3></li>
+                  </ul>
+                  
+                  <h3>Cloud Attivit&agrave; :</h3>
+                  <ul>
 
                     <xsl:for-each  select="document('../src/attivita.xml')/elenco/attivita">
                       <li>
