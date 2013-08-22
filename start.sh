@@ -56,6 +56,9 @@ compass compile
 echo "Homepage"
 java -jar ./lib/saxon9he.jar -o output/index.html src/homepage.xml xslt/homepage.xsl
 
+echo "Dati"
+java -jar ./lib/saxon9he.jar -o output/dati.html src/dati.xml xslt/dati.xsl
+
 echo "Indice Fol"
 java -jar ./lib/saxon9he.jar -o output/fol.html src/fol_data.xml xslt/fol_index.xsl
 
@@ -64,3 +67,16 @@ java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html src/commenti.xml xslt/
 
 echo "Singole Pagine delle attivita'/tag di Fol"
 java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html src/tag.xml xslt/fol-tags.xsl
+
+echo "Anagrafica Singole Sq"
+java -jar ./lib/saxon9he.jar -o output/angoli/nonesiste.html src/elenco_reparto.xml xslt/reparto.xsl
+
+echo "Anagrafica Singoli"
+java -jar ./lib/saxon9he.jar -o output/angoli/nonesiste.html src/elenco_reparto.xml xslt/reparto-single-page.xsl
+
+echo "Anagrafica Index"
+cp src/angoli/index.html output/angoli/index.html
+
+echo "Programmi"
+echo "Documenti"
+echo "Varie"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <impostazioni xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<nome>Campo di Competenza Informatica e Tecniche Scout</nome>
+	<anno>2013</anno>
 	<posizioni>
 		<posizione>
 			<nome>pagina dati prodotti ragazzi</nome>
