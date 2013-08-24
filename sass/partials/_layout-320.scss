@@ -1,0 +1,54 @@
+div[role="container"] {
+	max-width:320px;
+	align: center;
+	position: relative;
+}
+
+div[role="main"] {
+	font-size: 0.8em;
+}
+
+.main-content {
+	//border: 1px solid yellow;
+	color: $white;
+	background: transparent;
+	float: left;
+	top: 600px;
+	padding: 10px;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+.two-column-left-content {
+	//border: 1px solid red;
+	color: $white;
+	background: transparent;
+	float: left;
+	margin-left:5px;
+	margin-right:5px;	
+	min-width: 100px;
+}
+
+.two-column-main-content {
+	//border: 1px solid yellow;
+	color: $white;
+	background: transparent;
+	float: left;
+	margin-left:5px;
+	margin-right:5px;
+	width: 70%;
+}
+
+.two-column-right-content {
+	//border: 1px solid red;
+	color: $white;
+	background: transparent;
+	float: right;
+	margin-left:5px;
+	margin-right:5px;	
+	min-width: 100px;
+}
+
+.clear {
+    clear: both;
+}

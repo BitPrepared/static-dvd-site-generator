@@ -157,7 +157,9 @@
             <xsl:value-of select="homepage/nomeEvento"/>
             :::
             <xsl:value-of select="homepage/anno"/></title> 
-          <link href="../css/styles.css" rel="stylesheet" type="text/css"/>
+          <link rel="stylesheet" type="text/css" media="(min-width: 800px)" href="../css/styles.css"/>
+          <link rel="stylesheet" type="text/css" media="(max-width: 320px)" href="../css/styles-320.css" />
+          <link rel="stylesheet" type="text/css" media="(min-width: 480px) and (max-width: 800px)" href="../css/styles-480.css" />
 </head>
 <body>
 

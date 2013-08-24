@@ -27,7 +27,9 @@
                 <meta name="description" content=""/>
                 <meta name="viewport" content="width=device-width"/>
                 <title>Diario Fotografico - &nbsp; ::: <xsl:value-of select="document('../src/impostazioni.xml')/impostazioni/nome"/> ::: <xsl:value-of select="document('../src/impostazioni.xml')/impostazioni/anno"/> </title> 
-                <link href="../css/styles.css" rel="stylesheet" type="text/css"/>
+                <link rel="stylesheet" type="text/css" media="(min-width: 800px)" href="../css/styles.css"/>
+                <link rel="stylesheet" type="text/css" media="(max-width: 320px)" href="../css/styles-320.css" />
+                <link rel="stylesheet" type="text/css" media="(min-width: 480px) and (max-width: 800px)" href="../css/styles-480.css" />
           </head>
           
           <body>
