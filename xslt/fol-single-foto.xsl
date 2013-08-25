@@ -8,7 +8,7 @@
 
 <xsl:import href="header.xsl"/>
 <xsl:variable name="profondita">../</xsl:variable>
-<xsl:variable name="imgPath">../../foto/</xsl:variable>
+<xsl:variable name="imgPath">../foto/</xsl:variable>
 
 <xsl:output method="html" encoding="utf-8" name="html" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
