@@ -53,6 +53,10 @@ cp -rv src/img/rank/* output/img/rank/
 echo "Css Generation"
 compass compile
 
+echo "Preparazione dati"
+java -jar ./lib/saxon9he.jar -o output/commenti.xml src/fol_data.xml xslt/xml-process.xsl
+java -jar ./lib/saxon9he.jar -o output/elenco_reparto.xml src/query_result.xml xslt/xml-elenco-reparto.xsl
+
 echo "Homepage"
 java -jar ./lib/saxon9he.jar -o output/index.html src/homepage.xml xslt/homepage.xsl
 
@@ -63,16 +67,16 @@ echo "Indice Fol"
 java -jar ./lib/saxon9he.jar -o output/fol.html src/fol_data.xml xslt/fol_index.xsl
 
 echo "Singole Pagine delle immagini di Fol"
-java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html src/commenti.xml xslt/fol-single-foto.xsl
+java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html output/commenti.xml xslt/fol-single-foto.xsl
 
 echo "Singole Pagine delle attivita'/tag di Fol"
 java -jar ./lib/saxon9he.jar -o output/fol/nonesiste.html src/tag.xml xslt/fol-tags.xsl
 
 echo "Anagrafica Singole Sq"
-java -jar ./lib/saxon9he.jar -o output/angoli/nonesiste.html src/elenco_reparto.xml xslt/reparto.xsl
+java -jar ./lib/saxon9he.jar -o output/angoli/nonesiste.html output/elenco_reparto.xml xslt/reparto.xsl
 
 echo "Anagrafica Singoli"
-java -jar ./lib/saxon9he.jar -o output/angoli/nonesiste.html src/elenco_reparto.xml xslt/reparto-single-page.xsl
+java -jar ./lib/saxon9he.jar -o output/angoli/nonesiste.html output/elenco_reparto.xml xslt/reparto-single-page.xsl
 
 echo "Anagrafica Index"
 cp src/angoli/index.html output/angoli/index.html
