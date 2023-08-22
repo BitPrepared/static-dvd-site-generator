@@ -16,7 +16,6 @@ RUN groupadd -g ${GROUP_ID} mygroup
 RUN useradd -u ${USER_ID} -g ${GROUP_ID} -d /home/myuser -m myuser \
     && apt install ca-certificates bash
 
-
 ADD apt.conf.d /etc/apt/apt.conf.d
 
 RUN mkdir -p /usr/src/app

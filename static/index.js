@@ -24,6 +24,7 @@ const materialeVarie = fs.readJsonSync(path.join(__dirname, 'dati/materialeVarie
 const materialeAltreAttivita = fs.readJsonSync(path.join(__dirname, 'dati/materialeAltreAttivita.json'), 'utf8');
 const squadriglie = fs.readJsonSync(path.join(__dirname, 'dati/squadriglie.json'), 'utf8');
 const categories = fs.readJsonSync(path.join(__dirname, 'dati/categorieDiarioFotografico.json'), 'utf8');
+const materialeDiarioFotografico = fs.readJsonSync(path.join(__dirname, 'dati/materialeDiarioFotografico.json'), 'utf8');
 
 const authorizedExts = ['jpg', 'jpeg', 'svg', 'png', 'gif', 'JPG', 'JPEG', 'SVG', 'PNG', 'GIF'];
 
@@ -122,7 +123,7 @@ missingVarie.forEach((currentValue, index, arr) => {
   }
 });
 
-var diariofotografico = new DiarioFotografico(logger, authorizedExts ,categories);
+var diariofotografico = new DiarioFotografico(logger, authorizedExts ,categories, materialeDiarioFotografico);
 const missingDiario = diariofotografico.check();
 missingDiario.forEach((currentValue, index, arr) => {
   if (currentValue.responsabile) {

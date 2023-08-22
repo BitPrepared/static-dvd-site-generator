@@ -7,23 +7,19 @@ const handlebars = require('handlebars');
 const gm = require('gm').subClass({imageMagick: true});
 const dirTree = require('directory-tree');
 
-var DiarioFotografico = function (logger, elencoEstensioniAmmesse, categories) {
+var DiarioFotografico = function (logger, elencoEstensioniAmmesse, categories, materialeDiarioFotografico) {
   this.logger = logger;
   this.categories = categories;
   this.elencoEstensioniAmmesse = elencoEstensioniAmmesse;
+  this.materialeDiarioFotografico = materialeDiarioFotografico;
 };
+
 
 DiarioFotografico.prototype.check = function () {
   this.logger.info('DiarioFotografico', 'check materiale');
   var missing = [];
   if (!fs.existsSync(path.join(__dirname, './materiale/foto/'))) {
-    missing.push({
-      "title": "cartella foto",
-      "dir": "foto",
-      "responsabile" : [
-        "andrea", "samuele"
-      ]
-    });
+    missing = missing.concat(this.materialeDiarioFotografico);
   }
   return missing;
 };
