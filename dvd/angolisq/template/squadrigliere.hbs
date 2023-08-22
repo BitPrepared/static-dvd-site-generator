@@ -1,0 +1,58 @@
+---
+layout: base.html
+subtitle: Sq. ##NAMESQ## ##NAMESQUADRIGLIERE##
+---
+
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+    <table width="760" border="0" align="center">
+        <tr align="left">
+            <td height="128" colspan="5" valign="middle" class="menu">
+                <table width="100%" border="0">
+                    <tr valign="middle">
+                        <td valign="top"><a href="{{rootPath}}angolisq/reparto/##IDSQUADRIGLIERE##.jpg" target="_blank"><img alt="Foto ##IDSQUADRIGLIERE##" src="{{rootPath}}angolisq/reparto/thumb_##IDSQUADRIGLIERE##.jpg" border="1"></img></a></td>
+                        <td>
+                            <font size="3">
+                                <strong>Nominativo</strong>: {{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.nome}}&nbsp;{{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.cognome}}
+                                <br/>
+                                <strong>Data di Nascita</strong>: {{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.dtnascitadisplay}}
+                                <br/>
+                                <strong>Indirizzo</strong>:<br/>
+                                <dl>
+                                    <dd>{{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.indirizzo}}</dd>
+                                </dl>
+                                <br/>
+                                <strong>Telefono</strong>:{{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.telefono}} 
+                                <br/>
+                                <strong>Email</strong>: <a href="mailto:{{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.email}}">{{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.email}}</a>
+                                <br/>
+                                <strong>Instagram</strong>: {{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.instagram}}
+                                <br/>
+                                <strong>Squadriglia</strong>: ##NAMESQ##
+                                {{!-- <br/>
+                                <strong>Totem</strong>: {{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.totem}} --}}
+                                <br/>
+                                <strong>Specialità</strong>: {{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.specialita}}
+                                <br/>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr align="left">
+                        <td height="10" colspan="5" valign="middle">Torna alla <a href="##NAMESQ##.html">Squadriglia ##NAMESQ##</a></td>
+                    </tr>
+                    <tr align="left">
+                        <td height="1" colspan="5" valign="middle"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>
