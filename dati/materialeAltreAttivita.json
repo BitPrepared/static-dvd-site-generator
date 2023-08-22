@@ -1,0 +1,146 @@
+[
+    {
+        "title": "Percorso Retificato Belga Multimediale Mobile",
+        "dir": "prbmm",
+        "responsabile": [
+            "Stefano", "Nicola"
+        ],
+        "files": [
+            {
+                "filename": "oro.html",
+                "description": "Prbmm Equipaggio Oro"
+            },
+            {
+                "filename": "blu.html",
+                "description": "Prbmm Equipaggio Blu"
+            },
+            {
+                "filename": "arancio.html",
+                "description": "Prbmm Equipaggio Arancio"
+            },
+            {
+                "filename": "rosso.html",
+                "description": "Prbmm Equipaggio Rosso"
+            }
+        ]
+    },
+    {
+        "title": " Valutazione Impatto Ambientale ",
+        "dir": "via",
+        "responsabile": [
+            "Stefano B."
+        ],
+        "files": [
+            {
+                "filename": "vademecum_impatto_ambientale.odt",
+                "description": "Vademecum Impatto Ambientale"
+            },
+            {
+                "filename": "domande_VIA.odt",
+                "description": "Domande"
+            }
+        ]
+    },
+    {
+        "title": "Astronomia",
+        "dir": "astronomia",
+        "responsabile": [
+            "Fippe"
+        ],
+        "files": [
+            {
+                "filename": "planet_rotations.gif",
+                "description": "Planet Rotations"
+            },
+            {
+                "filename": "Veglia_alle_stelle_2022.pdf",
+                "description": "traccia veglia alle stelle"
+            },
+            {
+                "filename":"Costellazioni.pdf",
+                "description":"Costellazioni"
+            },
+            {
+                "filename": "astronomia.pdf",
+                "description": "Informazioni sull'astronomia"
+            },
+            {
+                "filename": "astronomia_slides.pdf",
+                "description": "Slide sull'astronomia"
+            },
+            {
+                "filename": "stelle_e_pianeti_a_confronto.mp4",
+                "description": "quanto e' grande l'universo, stelle e pianeti a confronto"
+            }
+        ]
+    },
+    {
+        "title": "Lezioni di telecomunicazioni di base",
+        "dir": "telecomunicazione",
+        "responsabile": [
+            "Daniele P."
+        ],
+        "files": [
+            {
+                "filename": "warriors-700-it-vbr.mpg",
+                "description": "Internet Warriors of the net"
+            },
+            {
+                "filename": "History_of_the_Internet-9hIQjrMHTv4.mp4",
+                "description": "Internet Storia di internet"
+            },
+            {
+                "filename": "postino_internet.odp",
+                "description": "Confronto tra il postino ed internet"
+            },
+            {
+                "filename": "PROTECT_IP_Act_Breaks_The_Internet.mp4",
+                "description": "Internet Leggi su internet"
+            },
+            {
+                "filename": "vladstudio_how_internet_works_1280x1024.jpg",
+                "description": "How DNS works"
+            },
+            {
+                "filename": "gioco",
+                "description": "Gioco IP"
+            }
+    
+        ]
+    },
+    {
+        "title": "Digital Life",
+        "dir": "digitallife",
+        "responsabile": [
+            "Elena",
+            "Stefano T.",
+            "Margherita"
+        ],
+        "files": []
+    },
+    {
+        "title": "Software libero",
+        "dir": "softwarelibero",
+        "responsabile": [
+            "Enrico"
+        ],
+        "files":[]
+    },
+    {
+        "title": "Riconoscimento Alberi",
+        "dir": "riconoscimentoalberi",
+        "responsabile": [
+            "Cecilia"
+        ],
+        "files":[
+            {
+                "filename": "schede_riconoscimento_alberi.pdf",
+                "description": "Libretto riconoscimento alberi"
+            },
+            {
+                "filename": "naturalista.pdf",
+                "description": "Slide sul naturalista"
+            }
+        ]
+    }
+]

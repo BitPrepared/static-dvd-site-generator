@@ -1,0 +1,57 @@
+[
+    {
+        "title": "Catechesi",
+        "dir": "catechesi",
+        "responsabile": [
+            "Don Fulvio", "Elena", "Lucia"
+        ],
+        "files": [
+            {
+                "filename": "costigiola-23-preghiera.pdf",
+                "description": "catechesi 23 agosto"
+            },
+            {
+                "filename": "costigiola-24-preghiera.pdf",
+                "description": "catechesi 24 agosto"
+            },
+            {
+                "filename": "costigiola-25-preghiera.pdf",
+                "description": "catechesi 25 agosto"
+            },
+            {
+                "filename": "costigiola-26-preghiera.pdf",
+                "description": "catechesi 26 agosto"
+            }
+        ]
+    },
+    {
+        "title": "Ricordo",
+        "dir": "ricordo",
+        "responsabile": [
+            "Nicola"
+        ],
+        "files": [
+            {
+                "filename": "Campetto_di_Competenza_Bit_Prepared.mp4",
+                "description": "ricordo campo"
+            }
+        ]
+    },
+    {
+        "title": "Segnapunti",
+        "dir": "segnapunti",
+        "responsabile": [
+            "Alessandro"
+        ],
+        "files": [
+            {
+                "filename": "puntel.pdf",
+                "description": "schema elettrico da stampare"
+            },
+            {
+                "filename": "puntel.png",
+                "description": "schema visivo componenti"
+            }
+        ]
+    }
+]

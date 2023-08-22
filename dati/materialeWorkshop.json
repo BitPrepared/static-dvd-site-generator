@@ -1,0 +1,91 @@
+[
+    {
+        "title": "App",
+        "dir": "app",
+        "responsabile": [
+            "Nicola C."
+        ],
+        "files": [
+            {
+                "description": "App di Esempio - Musicbox",
+                "url": "https://studio.code.org/projects/applab/xWSObAhlbYO5gReJ303ct-5IalL5Gz5m-YyQmvP-Qc0"
+            },
+            {
+                "description": "App di Esempio - Canzoniere",
+                "url": "https://studio.code.org/projects/applab/l9mHY61G9sF27C7zFKzD6TLDCrbWpxNqRMDJO2vAzO8"
+            },
+            {
+                "description": "App di Esempio - Star Wars Encyclopedia",
+                "url": "https://studio.code.org/projects/applab/ODA3P7UPuY896f89QriWFP6GV50B3WKJRrf3uX6G54A"
+            }
+        ]
+    },
+    {
+        "title": "Tecnonatura",
+        "dir": "carta",
+        "responsabile": [
+            "Cecilia",
+            "Enrico"
+        ],
+        "files": [
+            {
+                "filename": "qprof.pdf",
+                "description": "Qprof Guida"
+            },
+            {
+                "filename": "bookmark-costigiola.xml",
+                "description": "Bookmark Qgis di Costigiola"
+            },
+            {
+                "filename": "modello_del_terreno.pdf",
+                "description": "Guida alla creazione di un modello del terreno"
+            },
+            {
+                "filename": "venetoDTM5metri.zip",
+                "description": "Modello Raster del terreno (Veneto zona vicenza)"
+            },
+            {
+                "filename": "carta_del_campo_1.pdf",
+                "description": "Cartina 1"
+            },
+            {
+                "filename": "carta_del_campo_2.pdf",
+                "description": "Cartina 2"
+            }
+        ]
+    },
+    {
+        "title": "Editoria",
+        "dir": "editoria",
+        "responsabile": [
+            "Stefano T."
+        ],
+        "files": [
+            {
+                "filename": "scribus_guide.pdf",
+                "description": "Manuale scribus"
+            },
+            {
+                "filename": "glossario.odt",
+                "description": "glossario tecnico"
+            },
+            {
+                "filename": "comunicare.pdf",
+                "description": "settore stampa agesci - manuale sulla comunicazione"
+            }
+        ]
+    },
+    {
+        "title": "Stop Motion",
+        "dir": "stopmotion",
+        "responsabile": [
+            "Marino"
+        ],
+        "files": [
+            {
+                "filename": "stopmotion_2022.mp4",
+                "description": "Stop motion video finale"
+            }
+        ]
+    }
+]
