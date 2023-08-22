@@ -1,0 +1,19 @@
+<header>
+
+  <div class="wrapper">
+    <div id="logo">
+      <a href="#" alt="logo">&nbsp;</a>
+    </div>
+
+    <nav>
+      <ul>
+        {{#each menu}}
+        <li>
+          <a href="{{ concat a='./' b=url }}" class="nav-item developers active"><span>{{title}}</span></a>
+        </li>
+        {{/each}}
+      </ul>
+    </nav>
+  </div>
+
+</header>

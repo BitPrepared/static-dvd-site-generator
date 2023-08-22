@@ -1,0 +1,20 @@
+# files
+*.pub
+*.key
+*.crt
+*.pem
+*.log
+*.retry
+npm-debug.log*
+artillery_report_*
+
+# files exact match
+.DS_Store
+
+# directory
+OBIETTIVO
+build
+dist
+node_modules
+.vagrant
+/src

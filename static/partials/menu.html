@@ -1,0 +1,10 @@
+<div id="menu">
+    <li><a href="{{rootPath}}index.html">scout@costigiola:~$</a></li>
+    {{#each menu}} 
+    {{#if (eq alt ../subtitle)}}
+    <li><a href="#">/{{alt}}</a></li>
+    {{else}}
+    <li><a href="{{../rootPath}}{{url}}">/{{alt}}</a></li>
+    {{/if}} 
+    {{/each}}
+</div>
