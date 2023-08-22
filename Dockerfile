@@ -20,7 +20,7 @@ RUN apt-get install -y libmagick++-dev
 
 RUN export PATH=/usr/lib/i386-linux-gnu/ImageMagick-6.8.9/bin-Q16:$PATH
 
-ADD static-dvd-site-generator /usr/src/app
+ADD static /usr/src/app
 
 RUN chown -R ${USER_ID}:${GROUP_ID} /usr/src/app
 
