@@ -3,12 +3,21 @@ FROM node:18.2.0-bullseye
 ARG USER_ID
 ARG GROUP_ID
 
-RUN adduser -u ${USER_ID} --group users -h /home/myuser -D myuser \
-    && apt install ca-certificates bash
-
 ENV USER_ID=${USER_ID}
 ENV GROUP_ID=${GROUP_ID}
 ENV USER_NAME=mysuer
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN getent passwd 1000
+
+RUN userdel -r $(id -u -n ${USER_ID})
+RUN groupadd -g ${GROUP_ID} mygroup
+RUN useradd -u ${USER_ID} -g ${GROUP_ID} -d /home/myuser -m myuser \
+    && apt install ca-certificates bash
+
+
+ADD apt.conf.d /etc/apt/apt.conf.d
 
 RUN mkdir -p /usr/src/app
 
