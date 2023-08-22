@@ -1,0 +1,69 @@
+---
+layout: base.html
+subtitle: Esercitazioni
+---
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+    <p><span class="titolo">Workshop:</span></p>
+    {{#each esercitazioni.materialeWorkshop}}
+    <table width="760" border="0" align="center">
+        <tr align="left">
+            <td valign="middle" class="menu">
+                <p><span class="titolo">{{title}}</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    <ul>
+                    {{#each files}} 
+                    {{#if filename includeZero=true}}
+                        <li><a href="{{../../rootPath}}esercitazioni/{{../dir}}/{{filename}}">{{description}}</a></li>
+                    {{/if}} {{#if url includeZero=true}}
+                        <li><a href="{{url}}">{{description}}</a></li>
+                    {{/if}} 
+                    {{/each}}
+                    </ul>
+                </p>
+            </td>
+        </tr>
+    </table>
+     {{/each}}
+    <p><span class="titolo">Esercitazioni generiche:</span></p>
+     {{#each esercitazioni.materialeAltreAttivita}}
+    <table width="760" border="0" align="center">
+        <tr align="left">
+            <td valign="middle" class="menu">
+                <p><span class="titolo">{{title}}</span></p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>
+                    <ul>
+                        {{#each files}}
+                        {{#if filename includeZero=true}}
+                        <li><a href="{{../../rootPath}}esercitazioni/{{../dir}}/{{filename}}">{{description}}</a></li>
+                        {{/if}}
+                         {{#if url includeZero=true}}
+                        <li><a href="{{url}}">{{description}}</a></li>
+                        {{/if}}
+                        {{/each}}
+                    </ul>
+                </p>
+            </td>
+        </tr>
+    </table>
+    {{/each}}
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>
+
+
+
