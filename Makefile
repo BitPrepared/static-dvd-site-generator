@@ -8,7 +8,7 @@ build-dvd:
 	docker run --rm -i -v "${PWD}/dvd:/usr/src/app/dvd" -v "${PWD}/dati:/usr/src/app/dati" -v "${PWD}/lib:/usr/src/app/lib" -v "${PWD}/assets:/usr/src/app/assets" -v "${PWD}/build:/usr/src/app/build" -t $(IMAGE_NAME):$(VERSION) run build
 
 clean:
-	rm -rf build && mkdir build 
+	rm -rf build/*
 
 open:
 	qutebrowser file://build/index.html
