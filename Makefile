@@ -19,6 +19,9 @@ jpg-rename:
 clean:
 	rm -rf build/*
 
+outdated:
+	docker run --rm -i -v "${PWD}/dvd:/usr/src/app/dvd" -v "${PWD}/dati:/usr/src/app/dati" -v "${PWD}/static/index.js:/usr/src/app/index.js" -v "${PWD}/lib:/usr/src/app/lib" -v "${PWD}/assets:/usr/src/app/assets" -v "${PWD}/build:/usr/src/app/build" -t $(IMAGE_NAME):$(VERSION) outdated
+
 open:
 	qutebrowser file://${PWD}/build/index.html &
 

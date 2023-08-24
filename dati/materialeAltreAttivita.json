@@ -125,22 +125,5 @@
             "Enrico"
         ],
         "files":[]
-    },
-    {
-        "title": "Riconoscimento Alberi",
-        "dir": "riconoscimentoalberi",
-        "responsabile": [
-            "Cecilia"
-        ],
-        "files":[
-            {
-                "filename": "schede_riconoscimento_alberi.pdf",
-                "description": "Libretto riconoscimento alberi"
-            },
-            {
-                "filename": "naturalista.pdf",
-                "description": "Slide sul naturalista"
-            }
-        ]
     }
 ]
