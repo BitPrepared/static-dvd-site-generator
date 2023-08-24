@@ -31,7 +31,7 @@ function valuta(logger, materiale, squadriglie) {
 }
 
 Angolisq.prototype.check = function () {
-  this.logger.info('DiarioFotografico', 'check materiale');
+  this.logger.info('Angolisq', 'check materiale');
   var missing = [];
   this.logger.info('Angolisq', 'materiale');
   missing = missing.concat(valuta(this.logger, this.materiale, this.squadriglie));
@@ -79,13 +79,12 @@ Angolisq.prototype.build = function () {
     const sqname = element.name.toLowerCase();
     const members = element.members;
     var contents = fs.readFileSync(path.join(__dirname, 'template/sq.hbs'), 'utf8');
-    contents = contents.replace(new RegExp('##NAMESQ##', 'g'), sqname); //replace('##NAMESQ##', sqname);
+    contents = contents.replace(new RegExp('##NAMESQ##', 'g'), sqname);
     fsextra.ensureDirSync(path.join(__dirname, 'src/'));
     fs.writeFileSync(path.join(__dirname, 'src/' + sqname + '.hbs'), contents);
     for (var keyM in members) {
       var squadrigliere = members[keyM];
-      var filename = (squadrigliere.nome + squadrigliere.cognome).toLowerCase();
-      filename = filename.replace(/\s/g, "");
+      var filename = (squadrigliere.nome + squadrigliere.cognome).toLowerCase().replace('\'', '').replace(' ','');
       this.logger.info('found: ' + filename);
       const desc_name = squadrigliere.name + " " + squadrigliere.surname;
       var contents = fs.readFileSync(path.join(__dirname, 'template/squadrigliere.hbs'), 'utf8');
@@ -149,8 +148,9 @@ Angolisq.prototype.build = function () {
 
   //sovrascrivo con una thumb piu grande
   //fsextra.removeSync(path.join(dirReparto, 'thumb_fotogruppo.jpg'));
-  if (fs.existsSync(dirReparto)) {
-    createThumb(loggerParent, path.join(dirReparto, 'fotogruppo.jpg'), path.join(dirReparto, 'thumb_fotogruppo.jpg'), 650);
+  const pathFotoGruppo = path.join(dirReparto, 'fotogruppo.jpg');
+  if (fs.existsSync(pathFotoGruppo)) {
+    createThumb(loggerParent, pathFotoGruppo, path.join(dirReparto, 'thumb_fotogruppo.jpg'), 650);
   }
   
 }

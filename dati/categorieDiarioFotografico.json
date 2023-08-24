@@ -2,6 +2,7 @@
     "primo_giorno",
     "alzabandiera",
     "arrivo",
+    "formazione_sq",
     "catechesi",
     "cena",
     "gioco_formazione_squadriglie",
@@ -10,7 +11,7 @@
     "presentazioni",
     "workshop",
     "secondo_giorno",
-    "vario",
+    "varie",
     "missioni",
     "missioni_oro",
     "missioni_rosso",
@@ -32,5 +33,7 @@
     "bug_reporting",
     "mayalinux",
     "softwarelibero",
-    "ospiti"
+    "ospiti",
+    "impresa",
+    "patto_del_campo"
 ]

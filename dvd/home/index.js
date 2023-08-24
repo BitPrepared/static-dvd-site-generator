@@ -9,12 +9,12 @@ var Home = function (logger) {
         {
             "title": "Lettera",
             "file": "lettera/lettera.md",
-            "responsabile": ["Fippe", "Cecilia"]
+            "responsabile": ["Elena", "Luciano"]
         },
         {
             "title": "Sublettera",
             "file": "lettera/sublettera.md",
-            "responsabile": ["Fippe", "Cecilia"]
+            "responsabile": ["Elena", "Luciano"]
         }
     ]
 };
