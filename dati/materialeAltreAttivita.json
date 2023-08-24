@@ -49,28 +49,16 @@
         ],
         "files": [
             {
-                "filename": "planet_rotations.gif",
-                "description": "Planet Rotations"
-            },
-            {
-                "filename": "Veglia_alle_stelle_2022.pdf",
+                "filename": "veglia_alle_stelle_2023.pdf",
                 "description": "traccia veglia alle stelle"
             },
             {
-                "filename":"Costellazioni.pdf",
+                "filename":"costellazioni.pdf",
                 "description":"Costellazioni"
-            },
-            {
-                "filename": "astronomia.pdf",
-                "description": "Informazioni sull'astronomia"
             },
             {
                 "filename": "astronomia_slides.pdf",
                 "description": "Slide sull'astronomia"
-            },
-            {
-                "filename": "stelle_e_pianeti_a_confronto.mp4",
-                "description": "quanto e' grande l'universo, stelle e pianeti a confronto"
             }
         ]
     },
@@ -110,13 +98,22 @@
     },
     {
         "title": "Digital Life",
-        "dir": "digitallife",
+        "dir": "digital_life",
         "responsabile": [
             "Elena",
             "Stefano T.",
             "Margherita"
         ],
-        "files": []
+        "files": [
+            {
+                "filename": "carte_digital_life.pdf",
+                "description": "Carte per gioco Digital Life"
+            },
+            {
+                "filename": "Game.odt",
+                "description": "Gioco Digital Life"
+            }
+        ]
     },
     {
         "title": "Software libero",
