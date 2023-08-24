@@ -17,5 +17,5 @@ clean:
 	rm -rf build/*
 
 open:
-	qutebrowser file://${PWD}/build/index.html
+	qutebrowser file://${PWD}/build/index.html &
 

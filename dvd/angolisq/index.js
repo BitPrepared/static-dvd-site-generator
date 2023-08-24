@@ -34,7 +34,28 @@ Angolisq.prototype.check = function () {
   this.logger.info('Angolisq', 'check materiale');
   var missing = [];
   this.logger.info('Angolisq', 'materiale');
+
   missing = missing.concat(valuta(this.logger, this.materiale, this.squadriglie));
+
+  for (var key in this.squadriglie) {
+    var element = this.squadriglie[key];
+    const sqname = element.name.toLowerCase();
+    const members = element.members;
+    for (var keyM in members) {
+      var squadrigliere = members[keyM];
+      var filename = keyM.concat('.jpg');
+      if (!fs.existsSync(path.join(__dirname, './materiale/reparto/', filename))) {
+        missing = missing.concat({
+          "title": "manca ".concat(filename),
+          "dir": "reparto",
+          "responsabile": [
+              "Riccardo"
+          ]
+        });
+      }
+    }
+  }
+
   return missing;
 };
 
