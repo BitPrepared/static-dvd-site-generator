@@ -19,5 +19,35 @@
                 "url": "https://studio.code.org/projects/applab/ODA3P7UPuY896f89QriWFP6GV50B3WKJRrf3uX6G54A"
             }
         ]
+    },
+    {
+        "title": "Multimediale",
+        "dir": "multimediale",
+        "responsabile": [
+            "Luciano", "Elena"
+        ],
+        "files": [
+            {
+                "description": "Slide....",
+                "file": ""
+            }
+        ]
+    },
+    {
+        "title": "Grafica",
+        "dir": "htmlcss",
+        "responsabile": [
+            "Stefano", "Gloria"
+        ],
+        "files": [
+            {
+                "description": "Slide....",
+                "file": ""
+            },
+            {
+                "description": "Struttura Laboratorio",
+                "file": ""
+            }
+        ]
     }
 ]

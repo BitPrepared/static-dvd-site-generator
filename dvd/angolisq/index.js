@@ -56,6 +56,16 @@ Angolisq.prototype.check = function () {
     }
   }
 
+  const pathFotoGruppo = path.join(__dirname, 'materiale/reparto/', 'fotogruppo.jpg');
+  if (!fs.existsSync(pathFotoGruppo)) {
+    missing = missing.concat({
+      "title": "manca ".concat('fotogruppo.jpg'),
+      "dir": "reparto",
+      "responsabile": [
+          "Riccardo"
+      ]
+    });
+  }
   return missing;
 };
 

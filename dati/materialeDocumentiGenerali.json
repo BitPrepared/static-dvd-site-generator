@@ -7,6 +7,10 @@
         ],
         "files": [
             {
+                "filename": "costigiola-22-preghiera.pdf",
+                "description": "catechesi 22 agosto"
+            },
+            {
                 "filename": "costigiola-23-preghiera.pdf",
                 "description": "catechesi 23 agosto"
             },
@@ -17,10 +21,6 @@
             {
                 "filename": "costigiola-25-preghiera.pdf",
                 "description": "catechesi 25 agosto"
-            },
-            {
-                "filename": "costigiola-26-preghiera.pdf",
-                "description": "catechesi 26 agosto"
             }
         ]
     },
