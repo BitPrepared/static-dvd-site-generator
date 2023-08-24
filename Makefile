@@ -11,7 +11,10 @@ build-dvd-mounted:
 	docker run --rm -i -v "${PWD}/dvd:/usr/src/app/dvd" -v "${PWD}/dati:/usr/src/app/dati" -v "${PWD}/static/index.js:/usr/src/app/index.js" -v "${PWD}/lib:/usr/src/app/lib" -v "${PWD}/assets:/usr/src/app/assets" -v "/home/yoghi/blackhole/dvd:/usr/src/app/build" -t $(IMAGE_NAME):$(VERSION) run build
 
 riduci-foto:
-	$(shell ~/Script/convert_image_smp.sh dvd/diariofotografico/materiale/foto_originali 1600 dvd/diariofotografico/materiale/foto)
+	$(shell ~/Script/convert_image_smp.sh dvd/diariofotografico/materiale/foto_originali 1600 dvd/diariofotografico/materiale/foto UPDATE)
+
+jpg-rename:
+	$(shell find -name '*.JPG' -exec rename .JPG .jpg {} \;)
 
 clean:
 	rm -rf build/*
