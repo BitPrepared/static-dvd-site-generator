@@ -58,7 +58,7 @@
             },
             {
                 "description": "Qualita e formati",
-                "filename": "4_qualità e formati file.pdf"
+                "filename": "4_qualita e formati file.pdf"
             },
             {
                 "description": "Piani e Campi",
@@ -76,6 +76,22 @@
             {
                 "description": "Struttura Laboratorio",
                 "filename": "laboratorio_html_css.zip"
+            },
+            {
+                "description": "Oro",
+                "filename": "oro.zip"
+            },
+            {
+                "description": "Rosso",
+                "filename": "rosso.zip"
+            },
+            {
+                "description": "Blu",
+                "filename": "blu.zip"
+            },
+            {
+                "description": "Arancio",
+                "filename": "arancio.zip"
             }
         ]
     },
