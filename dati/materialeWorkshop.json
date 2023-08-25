@@ -49,5 +49,18 @@
                 "file": ""
             }
         ]
+    },
+    {
+        "title": "Mayalinux",
+        "dir": "mayalinux",
+        "responsabile": [
+            "Nicola C."
+        ],
+        "files": [
+            {
+                "description": "Github - Mayalinux",
+                "url": "https://github.com/BitPrepared/Mayalinux"
+            }
+        ]
     }
 ]
