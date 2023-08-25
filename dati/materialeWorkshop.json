@@ -17,7 +17,24 @@
             {
                 "description": "App di Esempio - Star Wars Encyclopedia",
                 "url": "https://studio.code.org/projects/applab/ODA3P7UPuY896f89QriWFP6GV50B3WKJRrf3uX6G54A"
+            },
+            {
+                "description": "App Rosso - Space Shooter",
+                "url": "https://studio.code.org/projects/applab/Ot20uAhNagNig0WI24g-ZG0S3G6pPAt3wPOFjsKR3lM"
+            },
+            {
+                "description": "App Oro - Gioco d'elloca",
+                "url": "https://studio.code.org/projects/applab/lFWewHIBZcbSjex_PwLURaHJ8H1MulowZKuaON3TMx8"
+            },
+            {
+                "description": "App Blu - Stick Fighter",
+                "url": "https://studio.code.org/projects/applab/97dJjpWIv1BsnWcClO81NqHFTT_82jztNKxTJZAO9NY"
+            },
+            {
+                "description": "App Arancio - Cluedo",
+                "url": "https://studio.code.org/projects/applab/ChxIU0MgVtepveS0aHrxSsaL9vQI_TGfoCq3lz8QDxU"
             }
+            
         ]
     },
     {
@@ -28,8 +45,24 @@
         ],
         "files": [
             {
-                "description": "Slide....",
-                "file": ""
+                "description": "Introduzione alla fotografia",
+                "filename": "1_Introuzione alla fotografia e generi fotografici.pdf"
+            },
+            {
+                "description": "Tipi macchina fotografica",
+                "filename": "2_tipi di macchina fotografica_ le reflex.pdf"
+            },
+            {
+                "description": "Objettivo e componenti",
+                "filename": "3_l'obiettivo e le sue componenti.pdf"
+            },
+            {
+                "description": "Qualita e formati",
+                "filename": "4_qualità e formati file.pdf"
+            },
+            {
+                "description": "Piani e Campi",
+                "filename": "5_Il video_ i piani e i campi.pdf"
             }
         ]
     },
@@ -41,12 +74,8 @@
         ],
         "files": [
             {
-                "description": "Slide....",
-                "file": ""
-            },
-            {
                 "description": "Struttura Laboratorio",
-                "file": ""
+                "filename": "laboratorio_html_css.zip"
             }
         ]
     },
