@@ -122,5 +122,18 @@
             "Stefano", "Alessandro R."
         ],
         "files":[]
+    },
+    {
+        "title": "ABCDEF",
+        "dir": "abcdef",
+        "responsabile": [
+            "Rubi"
+        ],
+        "files":[
+            {
+                "filename": "abcdef.pdf",
+                "description": "Slide ABCDEF"
+            }
+        ]
     }
 ]
