@@ -31,7 +31,7 @@ const authorizedExts = ['jpg', 'jpeg', 'svg', 'png', 'gif', 'JPG', 'JPEG', 'SVG'
 var menu = [
   {
     'url': 'esercitazioni/index.html',
-    'alt': 'Esercitazioni'
+    'alt': 'Impresa'
   },
   {
     'url': 'angolisq/index.html',
