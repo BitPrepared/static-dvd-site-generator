@@ -1,0 +1,32 @@
+---
+layout: base.html 
+subtitle: Diario Fotografico ##CATEGORY##
+---
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+
+    <p><span class="titolo"><a href="index.html">Diario Fotografico</a> > ##CATEGORY## </span></p>
+
+    <table>
+        <tr>
+            {{#each galleries.##CATEGORY##}} 
+            {{#if_modzero @index 5}}
+                </tr>
+                <tr>
+                <td><a href="{{../rootPath}}diariofotografico/foto{{path}}" alt="{{name}}" target="_blank"><img src="{{../rootPath}}diariofotografico/thumb{{pathThumb}}" alt="thumb of {{name}}" /></a></td>
+            {{else}}
+                <td><a href="{{../rootPath}}diariofotografico/foto{{path}}" alt="{{name}}" target="_blank"><img src="{{../rootPath}}diariofotografico/thumb{{pathThumb}}" alt="thumb of {{name}}" /></a></td>
+            {{/if_modzero}} 
+            {{/each}}
+        </tr>
+    </table>
+
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>

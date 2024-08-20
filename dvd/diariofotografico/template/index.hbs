@@ -1,0 +1,27 @@
+---
+layout: base.html
+subtitle: Diario Fotografico 
+---
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+
+    <p><span class="titolo">Diario Fotografico</span></p>
+
+    <p>Categorie: </p>
+    <p>
+        <ul>
+                {{#each categories}} 
+                <li><a href="{{this}}.html">{{this}}</a></li>
+                {{/each}}
+        </ul>
+    </p>
+
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>

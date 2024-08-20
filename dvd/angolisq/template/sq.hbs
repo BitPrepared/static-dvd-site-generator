@@ -1,0 +1,55 @@
+---
+layout: base.html 
+subtitle: Angoli di sq. ##NAMESQ##
+---
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+    <table width="760" border="0" align="center">
+        <tr align="left">
+            <td height="128" colspan="5" valign="middle" class="menu">
+                <p>
+                    <font size="3"><b>Squadriglia:&nbsp;</b>##NAMESQ##</font>
+                </p>
+                <ul>
+                    {{#each squadriglie.##NAMESQ##.members}}
+                    <li><a href="{{@key}}.html">{{this.nome}} {{this.cognome}}</a></li>
+                    {{/each}}
+                </ul>
+                <p>
+                    <font size="2">Torna alla <a href="index.html">Lista delle Squadriglie</a></font>
+                </p>
+            </td>
+            <td rowspan="2" align="center"> FOTO SQ.
+                <br/>
+                <a href="{{rootPath}}angolisq/squadriglia/##NAMESQ##.jpg" target="_blank">
+                    <img alt="Foto Sq. ##NAMESQ##" src="{{rootPath}}angolisq/squadriglia/thumb_##NAMESQ##.jpg" width="450"></img>
+                </a>
+            </td>
+            <tr>
+                <td>
+                    <br/>
+                    <div>
+                        <a title="urlo di squadriglia" href="{{rootPath}}angolisq/urli/##NAMESQ##.avi">Urlo di Sq.</a>
+                        <p> PRBM
+                            <ul>
+                                <li><a href="{{rootPath}}angolisq/hike/percorso-##NAMESQ##.pdf">Cartine percorso</a></li>
+                                <li><a href="{{rootPath}}angolisq/hike/gpx/##NAMESQ##.gpx">Percorso GPS</a></li>
+                            </ul>
+                        </p>
+                        <p>
+                            <font size="2">Torna alla <a href="index.html">Lista delle Squadriglie</a></font>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        </tr>
+    </table>
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>
