@@ -12,6 +12,11 @@ init:
 generate-anagrafica:
 	docker run --rm -i -t -v "${PWD}/anagrafica:/usr/src/myapp" -w /usr/src/myapp php:7.4-cli php anagrafica_da_csv.php > dati/squadriglie.json
 
+clean-docker:
+	docker buildx prune
+	docker rmi $(IMAGE_NAME)
+	docker rmi $(IMAGE_NAME):$(VERSION)
+
 clean:
 	rm -rf build
 

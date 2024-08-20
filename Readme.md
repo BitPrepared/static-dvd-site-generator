@@ -15,3 +15,5 @@ per generare l'anagrafica una volta posizionato il file `elenco_ragazzi.csv` nel
 # Build 
 Per generare il dvd nella cartella dvd basta dare `make` o `make build`.
 
+# Clean
+Per rimuovere la immagine docker di base basta `make clean-docker`
