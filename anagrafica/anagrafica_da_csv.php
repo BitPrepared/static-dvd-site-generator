@@ -72,4 +72,4 @@ if (($handle = fopen("./elenco_ragazzi.csv", "r")) !== FALSE) {
 
 echo json_encode($grp);
 
-echo json_encode($app_suddivisione);
+//echo json_encode($app_suddivisione);
