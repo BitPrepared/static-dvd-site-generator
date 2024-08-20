@@ -86,6 +86,7 @@ Angolisq.prototype.build = function () {
       var squadrigliere = members[keyM];
       var filename = (squadrigliere.nome + squadrigliere.cognome).toLowerCase();
       filename = filename.replace(/\s/g, "");
+      filename = filename.replace(/\'/g, "");
       this.logger.info('found: ' + filename);
       const desc_name = squadrigliere.name + " " + squadrigliere.surname;
       var contents = fs.readFileSync(path.join(__dirname, 'template/squadrigliere.hbs'), 'utf8');
