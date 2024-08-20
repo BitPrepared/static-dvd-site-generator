@@ -88,7 +88,7 @@ Angolisq.prototype.build = function () {
       filename = filename.replace(/\s/g, "");
       filename = filename.replace(/\'/g, "");
       this.logger.info('found: ' + filename);
-      const desc_name = squadrigliere.name + " " + squadrigliere.surname;
+      const desc_name = squadrigliere.nome + " " + squadrigliere.cognome;
       var contents = fs.readFileSync(path.join(__dirname, 'template/squadrigliere.hbs'), 'utf8');
       contents = contents.replace(new RegExp('##NAMESQ##', 'g'), sqname);
       contents = contents.replace(new RegExp('##NAMESQUADRIGLIERE##', 'g'), desc_name);
