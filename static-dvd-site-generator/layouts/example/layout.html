@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {{> common-meta }}
+  <meta charset="UTF-8" />
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+</head>
+<body>
+    {{> header }}
+
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+
+    {{{ contents }}}
+
+    <footer>
+      <p>Generated with {{ generator }} &mdash; <a href="{{ url }}">{{ url }}</a></p>
+    </footer>
+
+</body>
+</html>

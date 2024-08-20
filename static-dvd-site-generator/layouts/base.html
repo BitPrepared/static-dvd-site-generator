@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+        <title>HOME ::: {{title}} {{subtitle}}</title>
+        <link href="{{rootPath}}css/stile.css" rel="stylesheet" type="text/css"></link>
+        <link href="{{rootPath}}css/stile_m.css" rel="stylesheet" type="text/css"></link>
+    </head>
+
+    <body>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="main">
+            <tr>
+                <td align="right" valign="top">
+                     {{> menu }}
+                </td>
+                <td align="center" valign="top" scope="col">
+                    <div id="bone">
+                        {{{ contents }}}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </body>
+
+</html>
