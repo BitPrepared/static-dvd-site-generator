@@ -1,0 +1,16 @@
+[
+    {
+        "title": "So a memoria il morse",
+        "file": "morse.mp3",
+        "responsabile": [
+            "Stefano"
+        ]
+    },
+    {
+        "title": "Utility Scout",
+        "dir": "utility_scout",
+        "responsabile": [
+            "Enrico"
+        ]
+    }
+]

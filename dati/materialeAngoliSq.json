@@ -1,0 +1,36 @@
+[
+    {
+        "title": "Foto guidoni",
+        "dir": "guidoni",
+        "responsabile": [
+            "Riccardo"
+        ]
+    },
+    {
+        "title": "Urli Squadriglia",
+        "dir": "urli",
+        "responsabile": [
+            "Riccardo"
+        ]
+    },
+    {
+        "title": "Foto Reparto",
+        "dir": "reparto",
+        "responsabile": [
+            "Nicola"
+        ]
+    },
+    {
+        "title": "Foto Squadriglia",
+        "dir": "reparto",
+        "responsabile": [
+            "Nicola"
+        ],
+        "files": [
+            {
+                "filename": "fotogruppo.jpg",
+                "description": "foto di gruppo"
+            }
+        ]
+    }
+]
