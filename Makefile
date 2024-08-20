@@ -7,8 +7,8 @@ build:
 init:
 	docker buildx build --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
 
-anagrafica:
-	docker run --rm -i -t -v "${PWD}/anagrafica:/var/www/html" php:7.4-cli php anagrafica_da_csv.php
+generate-anagrafica:
+	docker run --rm -i -t -v "${PWD}/anagrafica:/usr/src/myapp" -w /usr/src/myapp php:7.4-cli php anagrafica_da_csv.php > dati/squadriglie.json
 
 clean:
 	rm -rf build && mkdir build 
