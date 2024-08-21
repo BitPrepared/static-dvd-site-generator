@@ -20,11 +20,7 @@ ADD apt.conf.d /etc/apt/apt.conf.d
 
 RUN mkdir -p /usr/src/app
 
-RUN apt update
-
-RUN apt-get install -y unzip git libcurl4-gnutls-dev wget 
-
-RUN apt-get install -y libmagick++-dev
+RUN apt update && apt install -y unzip git wget
 
 RUN export PATH=/usr/lib/i386-linux-gnu/ImageMagick-6.8.9/bin-Q16:$PATH
 
