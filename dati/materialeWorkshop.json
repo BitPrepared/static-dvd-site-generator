@@ -1,0 +1,111 @@
+[
+    {
+        "title": "App",
+        "dir": "app",
+        "responsabile": [
+            "Nicola C."
+        ],
+        "files": [
+            {
+                "description": "App di Esempio - Musicbox",
+                "url": "https://studio.code.org/projects/applab/xWSObAhlbYO5gReJ303ct-5IalL5Gz5m-YyQmvP-Qc0"
+            },
+            {
+                "description": "App di Esempio - Canzoniere",
+                "url": "https://studio.code.org/projects/applab/l9mHY61G9sF27C7zFKzD6TLDCrbWpxNqRMDJO2vAzO8"
+            },
+            {
+                "description": "App di Esempio - Star Wars Encyclopedia",
+                "url": "https://studio.code.org/projects/applab/ODA3P7UPuY896f89QriWFP6GV50B3WKJRrf3uX6G54A"
+            },
+            {
+                "description": "App Rosso - Space Shooter",
+                "url": "https://studio.code.org/projects/applab/Ot20uAhNagNig0WI24g-ZG0S3G6pPAt3wPOFjsKR3lM"
+            },
+            {
+                "description": "App Oro - Gioco d'elloca",
+                "url": "https://studio.code.org/projects/applab/lFWewHIBZcbSjex_PwLURaHJ8H1MulowZKuaON3TMx8"
+            },
+            {
+                "description": "App Blu - Stick Fighter",
+                "url": "https://studio.code.org/projects/applab/97dJjpWIv1BsnWcClO81NqHFTT_82jztNKxTJZAO9NY"
+            },
+            {
+                "description": "App Arancio - Cluedo",
+                "url": "https://studio.code.org/projects/applab/ChxIU0MgVtepveS0aHrxSsaL9vQI_TGfoCq3lz8QDxU"
+            }
+            
+        ]
+    },
+    {
+        "title": "Multimediale",
+        "dir": "multimediale",
+        "responsabile": [
+            "Luciano", "Elena"
+        ],
+        "files": [
+            {
+                "description": "Introduzione alla fotografia",
+                "filename": "1_Introuzione alla fotografia e generi fotografici.pdf"
+            },
+            {
+                "description": "Tipi macchina fotografica",
+                "filename": "2_tipi di macchina fotografica_ le reflex.pdf"
+            },
+            {
+                "description": "Objettivo e componenti",
+                "filename": "3_l'obiettivo e le sue componenti.pdf"
+            },
+            {
+                "description": "Qualita e formati",
+                "filename": "4_qualita e formati file.pdf"
+            },
+            {
+                "description": "Piani e Campi",
+                "filename": "5_Il video_ i piani e i campi.pdf"
+            }
+        ]
+    },
+    {
+        "title": "Grafica",
+        "dir": "htmlcss",
+        "responsabile": [
+            "Stefano", "Gloria"
+        ],
+        "files": [
+            {
+                "description": "Struttura Laboratorio",
+                "filename": "laboratorio_html_css.zip"
+            },
+            {
+                "description": "Oro",
+                "filename": "oro.zip"
+            },
+            {
+                "description": "Rosso",
+                "filename": "rosso.zip"
+            },
+            {
+                "description": "Blu",
+                "filename": "blu.zip"
+            },
+            {
+                "description": "Arancio",
+                "filename": "arancio.zip"
+            }
+        ]
+    },
+    {
+        "title": "Mayalinux",
+        "dir": "mayalinux",
+        "responsabile": [
+            "Nicola C."
+        ],
+        "files": [
+            {
+                "description": "Github - Mayalinux",
+                "url": "https://github.com/BitPrepared/Mayalinux"
+            }
+        ]
+    }
+]

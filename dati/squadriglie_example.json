@@ -1,0 +1,34 @@
+{
+    "oro": {
+        "name": "oro",
+        "members": {
+            "chiarademicco": {
+                "nome": "Pippo",
+                "cognome": "Zoo",
+                "dtnascita": "18022003",
+                "citta": "Topolinia",
+                "provincia": "Reggio Emilia",
+                "sesso": "M",
+                "telefono": "12345678901",
+                "nickname": null,
+                "facebook": null,
+                "blog": null,
+                "instagram": "",
+                "email": "pippo@topolinia.it",
+                "via": "Del basso",
+                "ncivico": "81",
+                "cap": "42019",
+                "zona": "Reggio Emilia",
+                "nomegruppo": "Topolinia 1",
+                "nomereparto": "Topos",
+                "nomesquadriglia": "Tigri",
+                "specialita": "fotografo",
+                "username": "pippo.zoo",
+                "password": "$2y$10$NzAOT77aZeiO0yx86GEwQONp2QJg\/5Fr1Zem1Aj.p8pMIFDnZBium",
+                "squadriglia": "",
+                "codicecensimento": "",
+                "ruolo": ""
+            }
+        }
+    }
+}

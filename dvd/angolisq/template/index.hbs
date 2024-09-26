@@ -1,0 +1,32 @@
+---
+layout: base.html
+subtitle: Angoli di sq.
+---
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+    <table width="760" border="0" align="center">
+        <tr align="left">
+            <td height="128" colspan="5" valign="middle" class="menu">
+                <p><span class="titolo">Equipaggi:</span></p>
+                {{#each squadriglie}}
+                <center>
+                    <a href="{{name}}.html">
+                        <img width="150" height="100" border="0" align="absmiddle" alt="foto guidone {{name}}" src="{{../rootPath}}angolisq/guidoni/thumb_{{name}}.jpg"/>
+                    </a>
+                    <br/><br/>
+                    <font size="3"><a href="{{name}}.html">{{name}}</a></font>
+                </center>
+                <br><br>
+                {{/each}}   
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>

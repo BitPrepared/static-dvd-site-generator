@@ -1,0 +1,57 @@
+[
+    {
+        "title": "Catechesi",
+        "dir": "catechesi",
+        "responsabile": [
+            "Don Fulvio", "Elena", "Lucia"
+        ],
+        "files": [
+            {
+                "filename": "preghiera-2023-08-22-felicita.html",
+                "description": "catechesi 22 agosto"
+            },
+            {
+                "filename": "preghiera-2023-08-23-liberta.html",
+                "description": "catechesi 23 agosto"
+            },
+            {
+                "filename": "preghiera-2023-08-24-frattale.html",
+                "description": "catechesi 24 agosto"
+            },
+            {
+                "filename": "preghiera-2023-08-25-community.html",
+                "description": "catechesi 25 agosto"
+            }
+        ]
+    },
+    {
+        "title": "Video ricordo",
+        "dir": "ricordo",
+        "responsabile": [
+            "Nicola"
+        ],
+        "files": [
+            {
+                "filename": "VideoRicordo-BitPrepared23.avi",
+                "description": "ricordo campo"
+            }
+        ]
+    },
+    {
+        "title": "Segnapunti",
+        "dir": "segnapunti",
+        "responsabile": [
+            "Alessandro"
+        ],
+        "files": [
+            {
+                "filename": "puntel.pdf",
+                "description": "schema elettrico da stampare"
+            },
+            {
+                "filename": "puntel.png",
+                "description": "schema visivo componenti"
+            }
+        ]
+    }
+]
