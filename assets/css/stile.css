@@ -1,4 +1,10 @@
 @charset "utf-8";
+
+#body {
+	background: black;
+	color: white;
+}
+
 .main {
 	margin: 0px;
 	height: 100%;
@@ -15,9 +21,7 @@
 
 	border: 1px solid #ffd700!important;
 	background:#000;
-padding:6px;
-
-
+	padding:6px;
 }
 
 #bone {
@@ -152,4 +156,12 @@ html {
 	border-bottom-width: 1px;
 	border-bottom-style: dotted;
 	border-bottom-color: #ffd700;
+}
+
+.menu a {
+    color: black;
+}
+
+div#album_sx {
+	color: white;
 }

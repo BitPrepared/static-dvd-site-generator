@@ -12,7 +12,6 @@
 links:
  - esercitazioni
  - angoli di sq.
- - blog
  - diario fotografico
  - documenti generali
  - programmi ed utilità

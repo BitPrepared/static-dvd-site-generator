@@ -6,7 +6,6 @@ const Programmi = require('./dvd/programmi/index.js');
 const DocumentiGenerali = require('./dvd/documenti/index.js');
 const Varie = require('./dvd/varie/index.js');
 const DiarioFotografico = require('./dvd/diariofotografico/index.js');
-const Blog = require('./dvd/blog/index.js');
 const Logger = require('./lib/logger.js');
 const GeneratoreHTML = require('./lib/generatore.js');
 const path = require('path');
@@ -35,10 +34,6 @@ var menu = [
   {
     'url': 'angolisq/index.html',
     'alt': 'Angoli di sq.'
-  },
-  {
-    'url': 'blog/index.html',
-    'alt': 'Blog'
   },
   {
     'url': 'diariofotografico/index.html',
@@ -91,13 +86,6 @@ angolisq.build();
 
 var programmi = new Programmi(logger);
 angolisq.check();
-
-var blog = new Blog(logger);
-const missingBlog = blog.check();
-missingBlog.forEach((currentValue, index, arr) => {
-  const responsabili = currentValue.responsabile.join(',');
-  logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-});
 
 var documentiGenerali = new DocumentiGenerali(logger, materialeDocumentiGenerali);
 const missingDocumentiGenerali = documentiGenerali.check();
@@ -202,8 +190,6 @@ prepareResources(logger, 'copy varie materiale', varie.srcAssets(), path.join(co
 prepareResources(logger, 'copy diario fotografico src', diariofotografico.src(), path.join(config.src, 'diariofotografico'));
 
 prepareResources(logger, 'copy diario fotografico materiale', diariofotografico.srcAssets(), path.join(config.output, 'diariofotografico'));
-
-prepareResources(logger, 'copy blog materiale', blog.srcAssets(), path.join(config.output, 'blog'));
 
 var generatore = new GeneratoreHTML(logger);
 
