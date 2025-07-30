@@ -124,6 +124,10 @@ missingDiario.forEach((currentValue, index, arr) => {
 diariofotografico.clean();
 diariofotografico.build();
 
+console.log(process.env);
+
+const env_debug = ['true', '1', 'yes'].includes((process.env.DEBUG || '').toLowerCase());
+
 logger.info('PrepareResources', 'prepare config');
 
 const outputdir = path.join(__dirname, 'build');
@@ -142,7 +146,8 @@ var config = {
   esercitazioni: esercitazioni.templateVar(),
   fotosrc: path.join(outputdir, 'diariofotografico/foto'),
   categories: categories,
-  authorizedExts: authorizedExts
+  authorizedExts: authorizedExts,
+  debug_enable: env_debug
 }
 
 logger.info('PrepareResources', 'prepare directory');

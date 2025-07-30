@@ -9,6 +9,7 @@ RUN adduser -u ${USER_ID} --group users -h /home/myuser -D myuser \
 ENV USER_ID=${USER_ID}
 ENV GROUP_ID=${GROUP_ID}
 ENV USER_NAME=mysuer
+ENV DEBUG=""
 
 RUN mkdir -p /usr/src/app
 
@@ -30,5 +31,5 @@ WORKDIR /usr/src/app
 
 RUN npm install
 
-ENTRYPOINT [ "npm" ]
-CMD [ "run build" ]
+#ENTRYPOINT [ "npm" ]
+CMD [ "npm", "run", "build" ]
