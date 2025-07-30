@@ -10,6 +10,7 @@ const dirTree = require('directory-tree');
 var DiarioFotografico = function (logger, elencoEstensioniAmmesse, categories) {
   this.logger = logger;
   this.categories = categories;
+  this.logger.info('DiarioFotografico', 'total categories: ' + this.categories.length);
   this.elencoEstensioniAmmesse = elencoEstensioniAmmesse;
 };
 
@@ -55,9 +56,10 @@ DiarioFotografico.prototype.build = function () {
 
   var contentsCategory = fs.readFileSync(path.join(__dirname, 'template/category.hbs'), 'utf8');
   this.categories.forEach(function(element) {
+    this.logger.info('DiarioFotografico', 'category: ' + element);
     var contentsCategoryR = contentsCategory.replace(new RegExp('##CATEGORY##', 'g'), element); 
     fs.writeFileSync(path.join(__dirname, 'src/' + element + '.hbs'), contentsCategoryR);
-  });
+  }.bind(this));
   this.thumb();
 }
 

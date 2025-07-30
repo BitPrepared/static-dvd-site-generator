@@ -14,7 +14,8 @@ subtitle: Diario Fotografico ##CATEGORY##
 
     <table>
         <tr>
-            {{#each galleries.##CATEGORY##}} 
+            {{#get galleries "##CATEGORY##"}}
+            {{#each this}} 
             {{#if_modzero @index 5}}
                 </tr>
                 <tr>
@@ -23,6 +24,7 @@ subtitle: Diario Fotografico ##CATEGORY##
                 <td><a href="{{../rootPath}}diariofotografico/foto{{path}}" alt="{{name}}" target="_blank"><img src="{{../rootPath}}diariofotografico/thumb{{pathThumb}}" alt="thumb of {{name}}" /></a></td>
             {{/if_modzero}} 
             {{/each}}
+            {{/get}}
         </tr>
     </table>
 
