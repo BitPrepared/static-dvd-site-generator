@@ -146,6 +146,7 @@ var config = {
   esercitazioni: esercitazioni.templateVar(),
   fotosrc: path.join(outputdir, 'diariofotografico/foto'),
   categories: categories,
+  excludeFileToSync: ['.DS_Store', 'Thumbs.db','.gitignore'],
   authorizedExts: authorizedExts,
   debug_enable: env_debug
 }
@@ -156,45 +157,80 @@ rimraf.sync(config.src);
 rimraf.sync(config.output);
 fs.ensureDirSync(config.src);
 
-function prepareResources(logger, title, src, dest) {
+/**
+ * Copia ricorsivamente i file da src a dest.
+ * Se `lowercase` è true, i nomi di file e cartelle saranno trasformati in minuscolo.
+ */
+function prepareResources(logger, config, title, src, dest, lowercase = false) {
   logger.info('PrepareResources', title);
   try {
     fs.ensureDirSync(dest);
-    fs.copySync(src, dest);
-    logger.success(title + " completata!");
+
+    const items = fs.readdirSync(src, { withFileTypes: true });
+
+    for (const item of items) {
+      const originalName = item.name;
+      const normalized = originalName.normalize('NFD'); // decomposizione
+
+      // Se è nella lista di esclusione, salta
+      if (config.excludeFileToSync.includes(originalName)) continue;
+
+      const targetName = lowercase ? originalName.toLowerCase() : originalName;
+
+      const srcPath = path.join(src, originalName);
+      const destPath = path.join(dest, targetName);
+
+      if (/[̀-ͯ]/.test(normalized)) { // caratteri combinanti (accenti, tilde ecc.)
+        logger.error('File con accenti (combinati):', srcPath);
+      }
+
+      if (item.isDirectory()) {
+        prepareResources(logger, config, title, srcPath, destPath, lowercase); // ricorsivo
+      } else {
+        fs.ensureDirSync(path.dirname(destPath));
+        fs.copyFileSync(srcPath, destPath);
+        if ( config.debug_enable ){
+          logger.success(`${originalName} sync to ${destPath}`);
+        }
+      }
+    }
+
+    logger.success(`${title} completata!`);
   } catch (err) {
-    logger.error(title + " fallita!");
+    logger.error(`${title} fallita!`);
     console.error(err);
-  }  
-} 
+  }
+}
 
-prepareResources(logger, 'copy assets css', './assets/css', path.join(config.output, 'css'));
 
-prepareResources(logger, 'copy first page src', home.src(), config.src);
 
-prepareResources(logger, 'copy esercitazioni src', esercitazioni.src(), path.join(config.src, 'esercitazioni'));
+prepareResources(logger, config, 'copy assets css', './assets/css', path.join(config.output, 'css'));
 
-prepareResources(logger, 'copy esercitazioni materiale', esercitazioni.srcAssets(), path.join(config.output, 'esercitazioni'));
+prepareResources(logger, config, 'copy first page src', home.src(), config.src);
 
-prepareResources(logger, 'copy angoli src', angolisq.src(), path.join(config.src, 'angolisq'));
+prepareResources(logger, config, 'copy esercitazioni src', esercitazioni.src(), path.join(config.src, 'esercitazioni'));
+
+prepareResources(logger, config, 'copy esercitazioni materiale', esercitazioni.srcAssets(), path.join(config.output, 'esercitazioni'));
+
+prepareResources(logger, config, 'copy angoli src', angolisq.src(), path.join(config.src, 'angolisq'), true);
 
 // FIXME: non copia la thumb della foto di gruppo
-prepareResources(logger, 'copy angoli materiale', angolisq.srcAssets(), path.join(config.output, 'angolisq'));
+prepareResources(logger, config, 'copy angoli materiale', angolisq.srcAssets(), path.join(config.output, 'angolisq'), true);
 
-prepareResources(logger, 'copy programmi src', programmi.src(), path.join(config.src, 'programmi'));
+prepareResources(logger, config, 'copy programmi src', programmi.src(), path.join(config.src, 'programmi'));
 
-prepareResources(logger, 'copy documenti generali src', documentiGenerali.src(), path.join(config.src, 'documenti'));
+prepareResources(logger, config, 'copy documenti generali src', documentiGenerali.src(), path.join(config.src, 'documenti'));
 
 // FIXME: il filename del ricordo campo non é preso dal json
-prepareResources(logger, 'copy documenti generali materiale', documentiGenerali.srcAssets(), path.join(config.output, 'documenti'));
+prepareResources(logger, config, 'copy documenti generali materiale', documentiGenerali.srcAssets(), path.join(config.output, 'documenti'));
 
-prepareResources(logger, 'copy varie src', varie.src(), path.join(config.src, 'varie'));
+prepareResources(logger, config, 'copy varie src', varie.src(), path.join(config.src, 'varie'));
 
-prepareResources(logger, 'copy varie materiale', varie.srcAssets(), path.join(config.output, 'varie'));
+prepareResources(logger, config, 'copy varie materiale', varie.srcAssets(), path.join(config.output, 'varie'));
 
-prepareResources(logger, 'copy diario fotografico src', diariofotografico.src(), path.join(config.src, 'diariofotografico'));
+prepareResources(logger, config, 'copy diario fotografico src', diariofotografico.src(), path.join(config.src, 'diariofotografico'), true);
 
-prepareResources(logger, 'copy diario fotografico materiale', diariofotografico.srcAssets(), path.join(config.output, 'diariofotografico'));
+prepareResources(logger, config, 'copy diario fotografico materiale', diariofotografico.srcAssets(), path.join(config.output, 'diariofotografico'), true);
 
 var generatore = new GeneratoreHTML(logger);
 
