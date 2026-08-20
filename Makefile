@@ -1,6 +1,7 @@
 IMAGE_NAME="bitprepared/dvd-site-generator"
 VERSION=bullseye
-EXECUTOR=docker
+# sovrascrivibile da ambiente o riga di comando: EXECUTOR=podman make build
+EXECUTOR ?= docker
 ifeq ($(EXECUTOR),podman)
 MOUNT_OPTION = :U
 else
