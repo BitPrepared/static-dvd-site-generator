@@ -19,7 +19,7 @@ bash:
 	${EXECUTOR} run --rm -i --userns=keep-id --entrypoint /bin/bash -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -t $(IMAGE_NAME):$(VERSION)
 
 init:
-	${EXECUTOR} buildx build --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
+	${EXECUTOR} build --build-arg USER_ID=$(shell id -u) --build-arg GROUP_ID=$(shell id -g) -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
 
 anagrafica:
 	${EXECUTOR} run --rm -i -t -v "${PWD}/anagrafica:/usr/src/myapp$(MOUNT_OPTION)" -w /usr/src/myapp php:7.4-cli php anagrafica_da_csv.php > dati/squadriglie.json

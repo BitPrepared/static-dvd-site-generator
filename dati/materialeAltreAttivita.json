@@ -15,29 +15,8 @@
                 "description": "Prbmm Equipaggio Blu"
             },
             {
-                "filename": "arancio.html",
-                "description": "Prbmm Equipaggio Arancio"
-            },
-            {
                 "filename": "rosso.html",
                 "description": "Prbmm Equipaggio Rosso"
-            }
-        ]
-    },
-    {
-        "title": " Valutazione Impatto Ambientale ",
-        "dir": "via",
-        "responsabile": [
-            "Stefano B."
-        ],
-        "files": [
-            {
-                "filename": "vademecum_impatto_ambientale.odt",
-                "description": "Vademecum Impatto Ambientale"
-            },
-            {
-                "filename": "domande_VIA.odt",
-                "description": "Domande"
             }
         ]
     },
@@ -49,28 +28,8 @@
         ],
         "files": [
             {
-                "filename": "planet_rotations.gif",
-                "description": "Planet Rotations"
-            },
-            {
-                "filename": "Veglia_alle_stelle_2022.pdf",
-                "description": "traccia veglia alle stelle"
-            },
-            {
-                "filename":"Costellazioni.pdf",
-                "description":"Costellazioni"
-            },
-            {
-                "filename": "astronomia.pdf",
-                "description": "Informazioni sull'astronomia"
-            },
-            {
-                "filename": "astronomia_slides.pdf",
-                "description": "Slide sull'astronomia"
-            },
-            {
-                "filename": "stelle_e_pianeti_a_confronto.mp4",
-                "description": "quanto e' grande l'universo, stelle e pianeti a confronto"
+                "filename": "presentazione_astronomia.pdf",
+                "description": "Presentazione Astronomia"
             }
         ]
     },
@@ -112,7 +71,7 @@
         "title": "Digital Life",
         "dir": "digitallife",
         "responsabile": [
-            "Margherita",
+            "Simone",
             "Stefano T."
         ],
         "files": []
@@ -121,25 +80,9 @@
         "title": "Software libero",
         "dir": "softwarelibero",
         "responsabile": [
-            "Enrico"
+            "Simone",
+            "Stefano T."
         ],
         "files":[]
-    },
-    {
-        "title": "Riconoscimento Alberi",
-        "dir": "riconoscimentoalberi",
-        "responsabile": [
-            "Cecilia"
-        ],
-        "files":[
-            {
-                "filename": "schede_riconoscimento_alberi.pdf",
-                "description": "Libretto riconoscimento alberi"
-            },
-            {
-                "filename": "naturalista.pdf",
-                "description": "Slide sul naturalista"
-            }
-        ]
     }
 ]

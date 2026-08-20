@@ -3,7 +3,8 @@ FROM node:18.2.0-bullseye
 ARG USER_ID
 ARG GROUP_ID
 
-RUN adduser -u ${USER_ID} --group users -h /home/myuser -D myuser \
+RUN groupadd -g ${GROUP_ID} scout \
+    && useradd --uid ${USER_ID} --gid ${GROUP_ID} --home-dir /home/myuser --create-home myuser \
     && apt install ca-certificates bash
 
 ENV USER_ID=${USER_ID}

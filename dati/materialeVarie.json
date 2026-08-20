@@ -10,7 +10,14 @@
         "title": "Utility Scout",
         "dir": "utility_scout",
         "responsabile": [
-            "Enrico"
+            "Stefano"
         ]
+    },
+    {
+        "title": "Urlo Cambusa",
+        "responsabile": [
+            "Stefano"
+        ],
+        "file":"cambusa.avi"
     }
 ]

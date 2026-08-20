@@ -7,76 +7,51 @@
         ],
         "files": [
             {
-                "description": "Marco - Calcolatrice",
-                "url": "https://studio.code.org/projects/applab/...."
-            }            
-        ]
-    },
-    {
-        "title": "Tecnonatura",
-        "dir": "carta",
-        "responsabile": [
-            "Cecilia",
-            "Enrico"
-        ],
-        "files": [
-            {
-                "filename": "qprof.pdf",
-                "description": "Qprof Guida"
+                "filename": "blu.zip",
+                "description": "Gioco Blu"
             },
             {
-                "filename": "bookmark-costigiola.xml",
-                "description": "Bookmark Qgis di Costigiola"
+                "filename": "rosso.zip",
+                "description": "Gioco Rosso"
             },
             {
-                "filename": "modello_del_terreno.pdf",
-                "description": "Guida alla creazione di un modello del terreno"
+                "filename": "oro.zip",
+                "description": "Gioco Oro"
             },
             {
-                "filename": "venetoDTM5metri.zip",
-                "description": "Modello Raster del terreno (Veneto zona vicenza)"
-            },
-            {
-                "filename": "carta_del_campo_1.pdf",
-                "description": "Cartina 1"
-            },
-            {
-                "filename": "carta_del_campo_2.pdf",
-                "description": "Cartina 2"
+                "filename": "credenziali_ragazzi.pdf",
+                "description": "Credenziali Code.org"
             }
         ]
     },
     {
-        "title": "Editoria",
-        "dir": "editoria",
+        "title": "Grafica",
+        "dir": "grafica",
         "responsabile": [
-            "Stefano T."
+            "Elena",
+            "Gloria"
         ],
         "files": [
             {
-                "filename": "scribus_guide.pdf",
-                "description": "Manuale scribus"
-            },
-            {
-                "filename": "glossario.odt",
-                "description": "glossario tecnico"
-            },
-            {
-                "filename": "comunicare.pdf",
-                "description": "settore stampa agesci - manuale sulla comunicazione"
+                "filename": "slide pattuglia grafica 2025.pdf",
+                "description": "Presentazione Grafica"
             }
         ]
     },
     {
-        "title": "Stop Motion",
-        "dir": "stopmotion",
+        "title": "Multimediale",
+        "dir": "multimediale",
         "responsabile": [
-            "Marino"
+            "Riccardo"
         ],
         "files": [
             {
-                "filename": "stopmotion_2022.mp4",
-                "description": "Stop motion video finale"
+                "filename": "Multimediale-foto_REV01.odp",
+                "description": "Presentazione Multimediale Sorgente"
+            },
+            {
+                "filename": "Multimediale-foto_REV01.pdf",
+                "description": "Presentazione Multimediale PDF"
             }
         ]
     }
