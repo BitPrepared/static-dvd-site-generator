@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="49">
+  <!--
+    Sorgente del footer del sito (change OpenSpec footer-dinamico-da-svg).
+    Il testo e`: "CostigioLa" (casing MISTO obbligatorio: il minuscolo attiva
+    i glifi alternativi "piccoli" del font, C e L maiuscoli quelli grandi)
+    seguito dalle date del campo: lo script sostituisce il segnaposto nel
+    testo qui sotto con il parametro nel formato gg-gg/mm/aaaa.
+    NB: non scrivere la stringa del segnaposto anche nei commenti: lo script
+    sostituisce TUTTE le occorrenze.
+
+    Ricetta (identificata dall'originale GIMP 2023):
+    - font: Star Jedi Outline, file scripts/star_jedi/Starjout.ttf
+      (scaricato con "make font", NON committato, caricato dallo script
+      via resvg fontFiles: il family qui sotto deve restare "Star Jedi Outline")
+    - dimensione 42px, letter-spacing -1px, riempimento bianco
+    - canvas 760x49 trasparente, baseline del testo a x=180 y=38
+      (l'inchiostro parte a (180, 8) e per le date 2023 finisce a (751, 38))
+  -->
+  <text x="180" y="38" font-family="Star Jedi Outline" font-size="42"
+        letter-spacing="-1" fill="#ffffff">CostigioLa {{DATE}}</text>
+</svg>

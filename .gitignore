@@ -4,4 +4,8 @@ build
 .claude
 /scripts/__pycache__/
 /scripts/confronto_report.md
+/scripts/star_jedi/
 /anagrafica/.idea/
+# changes OpenSpec intermedi mai in git: solo l'archivio dei change conclusi
+openspec/changes/*
+!openspec/changes/archive/

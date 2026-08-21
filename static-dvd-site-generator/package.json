@@ -18,6 +18,7 @@
     "open-linux": "xdg-open file://dist/index.html"
   },
   "dependencies": {
+    "@resvg/resvg-js": "2.6.2",
     "chalk": "^2.1.0",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
