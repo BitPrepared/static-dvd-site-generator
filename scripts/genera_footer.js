@@ -6,7 +6,9 @@
 //   node scripts/genera_footer.js ["gg-gg/mm/aaaa"] [--config dati/campo.json]
 //        [--out file.png] [--font file.ttf] [--fallback file.png]
 //
-// Senza argomenti legge le date da dati/campo.json. La build lo invoca così
+// Senza argomenti legge le date da dati/campo.json, che le tiene separate
+// ({"inizio": "gg/mm/aaaa", "fine": "gg/mm/aaaa"}); per il template vengono
+// ricomposte nel formato compatto gg-gg/mm/aaaa. La build lo invoca così
 // (make build); make footer DATE=... è la variante manuale di prova.
 // A ogni generazione riuscita aggiorna la risorsa scripts/footer_fallback.png
 // (usata dalla build se la generazione fallisce).
@@ -82,6 +84,38 @@ function validaDate(s) {
   return null;
 }
 
+// data singola "gg/mm/aaaa" (campo di dati/campo.json): null se valida
+function validaDataSingola(etichetta, s) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+  if (!m) return 'Formato ' + etichetta + ' non valido: atteso gg/mm/aaaa (es. 22/08/2023)';
+  const [, g, ms] = m;
+  if (g < '01' || g > '31') {
+    return 'Giorno di ' + etichetta + ' fuori range (01-31): ' + s;
+  }
+  if (ms < '01' || ms > '12') {
+    return 'Mese di ' + etichetta + ' fuori range (01-12): ' + s;
+  }
+  return null;
+}
+
+// Ricompone le due date separate nel formato compatto gg-gg/mm/aaaa del
+// template: la ricetta tipografica ha canvas a larghezza fissa e un solo
+// mese/anno, quindi un campo a cavallo di mesi diversi non è rappresentabile.
+function componeDate(inizio, fine) {
+  const errore = validaDataSingola('inizio', inizio) || validaDataSingola('fine', fine);
+  if (errore) esci(errore);
+  const [, g1, ms1, aa1] = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(inizio);
+  const [, g2, ms2, aa2] = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(fine);
+  if (ms1 !== ms2 || aa1 !== aa2) {
+    esci('Le date del campo sono a cavallo di mesi/anni (' + inizio + ' -> ' + fine +
+      '): il footer supporta un solo mese/anno.');
+  }
+  if (g2 < g1) {
+    esci('La data di fine precede quella di inizio: ' + inizio + ' -> ' + fine);
+  }
+  return g1 + '-' + g2 + '/' + ms1 + '/' + aa1;
+}
+
 // --- argomenti ---
 const argv = process.argv.slice(2);
 let date = null;
@@ -114,12 +148,14 @@ if (config) {
     parsed = JSON.parse(fs.readFileSync(config, 'utf8'));
   } catch (e) {
     esci('Config non leggibile come JSON: ' + config +
-      '\nAtteso il formato di dati/campo.json, es. {"date": "22-26/08/2023"}\n' + e.message);
+      '\nAtteso il formato di dati/campo.json, es. {"inizio": "22/08/2023", "fine": "26/08/2023"}\n' + e.message);
   }
-  if (typeof parsed.date !== 'string' || !parsed.date) {
-    esci('Config senza campo "date": ' + config + '\nAtteso es. {"date": "22-26/08/2023"}');
+  if (typeof parsed.inizio !== 'string' || !parsed.inizio ||
+      typeof parsed.fine !== 'string' || !parsed.fine) {
+    esci('Config senza campi "inizio"/"fine": ' + config +
+      '\nAtteso es. {"inizio": "22/08/2023", "fine": "26/08/2023"}');
   }
-  date = parsed.date;
+  date = componeDate(parsed.inizio, parsed.fine);
 }
 
 const errore = validaDate(date);

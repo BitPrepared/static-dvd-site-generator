@@ -1,4 +1,5 @@
 {
-  "date": "21-25/08/2026",
-  "note": "date del campo per il footer del sito (formato gg-gg/mm/aaaa); aggiornare ogni anno prima/durante il campo: make build le usa per generare build/img/footer.png"
+  "inizio": "21/08/2026",
+  "fine": "25/08/2026",
+  "note": "date del campo per il footer del sito (inizio e fine separate, formato gg/mm/aaaa); aggiornare ogni anno prima/durante il campo: make build le usa per generare build/img/footer.png"
 }
