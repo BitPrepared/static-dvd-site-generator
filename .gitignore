@@ -1,6 +1,7 @@
 build
 .DS_Store
 .config
+.claude
 /scripts/__pycache__/
 /scripts/confronto_report.md
 /anagrafica/.idea/

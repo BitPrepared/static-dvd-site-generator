@@ -16,13 +16,51 @@ const fs = require('fs-extra');
 
 const shell = require('shelljs');
 
-const materialeAngoliSq = fs.readJsonSync(path.join(__dirname, 'dati/materialeAngoliSq.json'), 'utf8');
-const materialeWorkshop = fs.readJsonSync(path.join(__dirname, 'dati/materialeWorkshop.json'), 'utf8');
-const materialeDocumentiGenerali = fs.readJsonSync(path.join(__dirname, 'dati/materialeDocumentiGenerali.json'), 'utf8');
-const materialeVarie = fs.readJsonSync(path.join(__dirname, 'dati/materialeVarie.json'), 'utf8');
-const materialeAltreAttivita = fs.readJsonSync(path.join(__dirname, 'dati/materialeAltreAttivita.json'), 'utf8');
-const squadriglie = fs.readJsonSync(path.join(__dirname, 'dati/squadriglie.json'), 'utf8');
-const categories = fs.readJsonSync(path.join(__dirname, 'dati/categorieDiarioFotografico.json'), 'utf8');
+// Dati obbligatori: se uno manca (o non è leggibile) si esce subito con un
+// messaggio azionabile, niente stack trace criptici con il campo in corso.
+const DATI_OBBLIGATORI = [
+  { chiave: 'materialeAngoliSq', file: 'materialeAngoliSq.json',
+    aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/materialeAngoliSq.json" },
+  { chiave: 'materialeWorkshop', file: 'materialeWorkshop.json',
+    aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/materialeWorkshop.json" },
+  { chiave: 'materialeDocumentiGenerali', file: 'materialeDocumentiGenerali.json',
+    aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/materialeDocumentiGenerali.json" },
+  { chiave: 'materialeVarie', file: 'materialeVarie.json',
+    aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/materialeVarie.json" },
+  { chiave: 'materialeAltreAttivita', file: 'materialeAltreAttivita.json',
+    aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/materialeAltreAttivita.json" },
+  { chiave: 'squadriglie', file: 'squadriglie.json',
+    aiuto: "Genera l'anagrafica con 'make anagrafica' (serve anagrafica/elenco_ragazzi.csv)\n" +
+           'Per un test rapido: cp dati/squadriglie.example.json dati/squadriglie.json' },
+  { chiave: 'categories', file: 'categorieDiarioFotografico.json',
+    aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/categorieDiarioFotografico.json" }
+];
+
+function leggiDatiObbligatori(elenco) {
+  const dati = {};
+  for (const voce of elenco) {
+    const percorsoCompleto = path.join(__dirname, 'dati', voce.file);
+    if (!fs.existsSync(percorsoCompleto)) {
+      console.error('');
+      console.error('Dato obbligatorio mancante: dati/' + voce.file);
+      console.error(voce.aiuto);
+      console.error('');
+      process.exit(1);
+    }
+    try {
+      dati[voce.chiave] = fs.readJsonSync(percorsoCompleto, 'utf8');
+    } catch (err) {
+      console.error('');
+      console.error('Dato obbligatorio non leggibile: dati/' + voce.file);
+      console.error(err.message);
+      console.error('');
+      process.exit(1);
+    }
+  }
+  return dati;
+}
+
+const { materialeAngoliSq, materialeWorkshop, materialeDocumentiGenerali, materialeVarie, materialeAltreAttivita, squadriglie, categories } = leggiDatiObbligatori(DATI_OBBLIGATORI);
 
 const authorizedExts = ['jpg', 'jpeg', 'svg', 'png', 'gif', 'JPG', 'JPEG', 'SVG', 'PNG', 'GIF'];
 
@@ -123,8 +161,6 @@ missingDiario.forEach((currentValue, index, arr) => {
 
 diariofotografico.clean();
 diariofotografico.build();
-
-console.log(process.env);
 
 const env_debug = ['true', '1', 'yes'].includes((process.env.DEBUG || '').toLowerCase());
 

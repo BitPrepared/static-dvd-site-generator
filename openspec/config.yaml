@@ -1,0 +1,39 @@
+schema: spec-driven
+
+context: |
+  Dominio: generatore del sito/DVD del "Campo di Competenza Informatica e
+  Tecniche Scout" (Bit Prepared, campo estivo annuale di ~5 giorni, fine agosto).
+  Il sito viene generato "in real time" durante il campo: ogni giorno arrivano
+  foto, pagine e materiali e la build deve funzionare la sera stessa.
+
+  Stack: Node 18 in container (node:18-bullseye), pipeline custom Metalsmith +
+  Handlebars; ogni sezione sta in dvd/<nome>/index.js con ciclo
+  check()/clean()/build(); dati di configurazione in dati/*.json; anagrafica
+  generata da CSV via PHP 7.4 in container separato. Runtime: docker o podman
+  (variabile EXECUTOR del Makefile; podman rootless usa --userns=keep-id e
+  montaggi :U; l'utente dell'immagine si costruisce su uid/gid di chi builda).
+
+  Convenzioni: documentazione, commenti e commit in italiano.
+
+  PRIVACY (regola fondamentale): foto (dvd/*/materiale), pagine di contenuto
+  (dvd/*/src), anagrafica (dati/squadriglie.json, anagrafica/*.csv/xls/xlsx/ods)
+  sono gitignored PER SCELTA: dati di minori mai in git, mai in release
+  pubbliche, mai su GitHub. Solo codice e dati/*.json di struttura viaggiano
+  in git; il contenuto si muove solo via rsync/scp fra le macchine di fiducia.
+
+  Vincolo operativo: durante il campo (fine agosto) solo modifiche a rischio
+  zero sulla pipeline; refactor strutturali (toolchain, anagrafica in node,
+  CI) solo a campo concluso.
+
+rules:
+  proposal:
+    - Scrivere in italiano
+    - Includere sempre una valutazione "rischio per la build a campo" per ogni
+      modifica proposta
+  tasks:
+    - Task granulari, max 2 ore ciascuno
+
+operations:
+  apply:
+    guidance:
+      - "Implement EACH task using TDD: write a failing test/verification first, then implement until green, BEFORE marking the task done."

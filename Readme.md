@@ -1,47 +1,76 @@
-# Installazione
+# DVD del Campo — Runbook annuale
 
-## Requirements
+Generatore del sito del Campo di Competenza Informatica e Tecniche Scout.
+Il sito nasce durante il campo: foto e materiali arrivano ogni giorno e la
+build deve funzionare la sera stessa.
 
- - docker 
- - bash 
+## 1. Setup macchina (una volta)
 
-## Creazione Enviroment
-dare `make init` per creare l'ambiente di base.
+Requisiti: docker **o** podman, make, bash.
 
-# Config
-per generare l'anagrafica una volta posizionato il file `elenco_ragazzi.csv` nella directory anagrafica , lanciare il `make anagrafica`.
+    git clone git@github.com:BitPrepared/static-dvd-site-generator.git
+    cd static-dvd-site-generator
 
-# Test
-Per fare dei test esiste gia un file generato che si chiama `dati/squadriglie.example.json` basta rinominarlo in `dati/squadriglie.json`.
+Con docker è tutto default. Con podman: `export EXECUTOR=podman`
+(nel .bashrc, o `make EXECUTOR=podman ...` ogni volta).
 
-# Build 
-Per generare il dvd nella cartella dvd basta dare `make` o `make build`.
+    make init    # costruisce l'immagine con il tuo uid/gid
+                 # (compatibile podman rootless --userns=keep-id)
 
-### Foto
-Le foto vanno nella cartella `dvd/diariofotografico/materiale/foto` e devono essere nella forma "giorno/categoria" in modo da dividerle correttamente. A livello grafico vedra' solo quello configurato in `dati/categorieDiarioFotografico.json`. Il processo di build dei thumb richiede due build, la prima genera le thumb la seconda le renderizza. 
+Smoke test della pipeline:
 
-### Preparazione Foto
-1. per sistemare i nomi
-```
-./ruota_rinomina_immagini.sh .
-```
-quindi `~/scripts/ruota_rinomina_immagini.sh ~/share_disks/staff/foto`
-2. Per sistemare la dimensione delle foto
-```
-./convert_image_smp.sh 
-Usage: ./convert_image_smp.sh sourceDirectory [imageLongEdge] [destinationDirectory] [UPDATE]
-  Please specify sourceDirectory and destinationDirectory without trailing slash.
-	DEFAULTS: imageLongEdge=1600, destinationDirectory=sourceDirectory_1600
-  Typing UPDATE, will upgrade files if necessary. This will work only if destinationDirectory is specified
-```
-quindi `~/scripts/convert_image_smp.sh ~/share_disks/staff/foto 1600 ~/static-dvd-site-generator/dvd/diariofotografico/materiale/foto/ UPDATE`
+    cp dati/squadriglie.example.json dati/squadriglie.json
+    make build
 
-# Clean
-Per pulire la build `make clean`.
+Nota permessi: con podman i mount usano `:U` → tutta la cartella della repo
+deve essere di proprietà dell'utente che lancia `make` (niente build da root
+su cartelle di altri utenti).
 
-## Cambi index.js principale 
-Per rimuovere la immagine docker di base basta `make init`. Se si vuole cancellare l'immagine `make clean-docker`. 
+## 2. Pre-campo
 
-# Debug
-Per attivare il debug basta nel Makefile settare DEBUG a True
+1. Metti l'elenco ragazzi dell'anno in `anagrafica/elenco_ragazzi.csv`
+   (mai in git: vedi §5)
+2. `make anagrafica` → genera `dati/squadriglie.json`
+3. Aggiorna i dati dell'anno: `dati/categorieDiarioFotografico.json`
+   (giorni e categorie del diario) e i `dati/materiale*.json`
+4. Prepara le pagine di contenuto `dvd/*/src/*.hbs`
 
+## 3. Durante il campo (il quotidiano)
+
+Le foto arrivano dalla directory condivisa dello staff. Preparazione
+(script di preparazione, prerequisito esterno in `~/scripts/`, non nel repo):
+
+    ~/scripts/ruota_rinomina_immagini.sh ~/share_disks/staff/foto
+    ~/scripts/convert_image_smp.sh ~/share_disks/staff/foto 1600 \
+        ~/.../dvd/diariofotografico/materiale/foto/ UPDATE
+
+Le foto vanno in `dvd/diariofotografico/materiale/foto/giorno/categoria`.
+Il sito mostra solo le categorie configurate in
+`dati/categorieDiarioFotografico.json`.
+
+    make build
+    make build    # sì, due volte: la prima genera i thumb, la seconda
+                  # li renderizza nelle pagine
+                  # ⚠ limite noto, da evolvere (backlog post-campo)
+
+Per l'output verboso: `DEBUG=True` nel Makefile (o `make DEBUG=True build`).
+
+## 4. Fine campo
+
+1. Verifica finale del sito (apri `build/index.html` nel browser)
+2. Committa codice e `dati/*.json` (il `git status` ti mostra i soli
+   tracciati), push, tag `v<anno>` + release GitHub a fine/post campo
+   (solo sorgenti: mai allegati con foto)
+3. Distribuzione: copia `build/` su chiavetta USB (sito statico,
+   parte da `index.html`)
+4. Archivia il materiale dell'anno (foto/video) dove archivi di norma:
+   in git non va mai
+
+## 5. Privacy — regole non negoziabili
+
+Foto (`dvd/*/materiale`), pagine di contenuto (`dvd/*/src`),
+anagrafica (`dati/squadriglie.json`, `anagrafica/*.csv/xls/xlsx/ods`)
+sono gitignored PER SCELTA: dati di minori mai in git, mai in release,
+mai su servizi esterni. Si muovono solo via scp/rsync fra le macchine
+di fiducia. A fine stagione archivia i dati anagrafici fuori dalle
+cartelle git.
