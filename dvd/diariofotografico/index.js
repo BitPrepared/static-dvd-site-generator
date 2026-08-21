@@ -29,26 +29,27 @@ DiarioFotografico.prototype.check = function () {
   return missing;
 };
 
+// Genera un thumb se manca (se esiste non si rigenera). Restituisce una
+// Promise: la callback di gm non usa this (che lì non è il plugin) ma il
+// logger della closure, e un fallimento rigetta con l'errore reale di
+// gm/ImageMagick e il file coinvolto.
 function createThumb(loggerParent, fullpathIn, fullpathOut) {
-  if (!fs.existsSync(fullpathOut)) {
-    loggerParent.info("create thumb " + path.basename(fullpathIn));
-
-    gm(fs.readFileSync(fullpathIn)).resize(150,150).write(fullpathOut, function(err) {
-      if (err) this.logger.error(err);
-    });
-
-    // fs.writeFileSync(fullpathOut, imagemagick.convert({
-    //   srcData: fs.readFileSync(fullpathIn),
-    //   quality: 95,
-    //   width: 150,
-    //   height: 150,
-    //   resizeStyle: 'aspectfit',
-    //   format: 'JPEG'
-    // }));
+  if (fs.existsSync(fullpathOut)) {
+    return Promise.resolve(); // thumb già presente: non si rigenera
   }
+  loggerParent.info("create thumb " + path.basename(fullpathIn));
+  return new Promise((resolve, reject) => {
+    gm(fs.readFileSync(fullpathIn)).resize(150,150).write(fullpathOut, function(err) {
+      if (err) {
+        reject(new Error("thumb di " + fullpathIn + ": " + (err.message || err)));
+        return;
+      }
+      resolve();
+    });
+  });
 }
 
-DiarioFotografico.prototype.build = function () {
+DiarioFotografico.prototype.build = async function () {
   this.logger.info('DiarioFotografico', 'build');
   var contents = fs.readFileSync(path.join(__dirname, 'template/index.hbs'), 'utf8');
   fsextra.ensureDirSync(path.join(__dirname, 'src/'));
@@ -57,26 +58,31 @@ DiarioFotografico.prototype.build = function () {
   var contentsCategory = fs.readFileSync(path.join(__dirname, 'template/category.hbs'), 'utf8');
   this.categories.forEach(function(element) {
     this.logger.info('DiarioFotografico', 'category: ' + element);
-    var contentsCategoryR = contentsCategory.replace(new RegExp('##CATEGORY##', 'g'), element); 
+    var contentsCategoryR = contentsCategory.replace(new RegExp('##CATEGORY##', 'g'), element);
     fs.writeFileSync(path.join(__dirname, 'src/' + element + '.hbs'), contentsCategoryR);
   }.bind(this));
-  this.thumb();
+  await this.thumb();
 }
 
-DiarioFotografico.prototype.thumb = function () {
+// Thumb di tutte le foto del diario, generati in serie: la build della
+// sezione termina solo quando sono tutti su disco (una sola make build).
+DiarioFotografico.prototype.thumb = async function () {
   this.logger.info('DiarioFotografico', 'create thumb');
   const destdir = path.join(__dirname, 'materiale/thumb/');
   fsextra.ensureDirSync(destdir);
   const fotoSrc = path.join(__dirname, 'materiale/foto/');
   const elencoEstensioni = this.elencoEstensioniAmmesse.join("|")
   const loggerParent = this.logger;
-  const filteredTree = dirTree(fotoSrc, { extensions: new RegExp(".(" + elencoEstensioni + ")$") }, function (item, PATH) {
+  const foto = [];
+  dirTree(fotoSrc, { extensions: new RegExp(".(" + elencoEstensioni + ")$") }, function (item, PATH) {
+    foto.push(item);
+  });
+  for (const item of foto) {
     const outputdir = item.path.replace(fotoSrc, '').replace(item.name, '');
     const outputname = item.name.replace(path.extname(item.path), '') + ".jpg";
     fsextra.ensureDirSync(destdir + outputdir);
-    const output = destdir + outputdir + outputname;
-    createThumb(loggerParent, item.path, output);
-  });
+    await createThumb(loggerParent, item.path, destdir + outputdir + outputname);
+  }
 }
 
 DiarioFotografico.prototype.clean = function () {

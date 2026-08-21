@@ -38,21 +38,37 @@ Angolisq.prototype.check = function () {
   return missing;
 };
 
+// Genera un thumb se manca (se esiste non si rigenera). Restituisce una
+// Promise: la callback di gm non usa this (che lì non è il plugin) ma il
+// logger della closure, e un fallimento rigetta con l'errore reale di
+// gm/ImageMagick e il file coinvolto.
 function createThumb(loggerParent, fullpathIn, fullpathOut, size) {
-  if (!fs.existsSync(fullpathOut)) {
-    loggerParent.info("create thumb of " + path.basename(fullpathIn));
+  if (fs.existsSync(fullpathOut)) {
+    return Promise.resolve(); // thumb già presente: non si rigenera
+  }
+  loggerParent.info("create thumb of " + path.basename(fullpathIn));
+  return new Promise((resolve, reject) => {
     gm(fs.readFileSync(fullpathIn)).resize(size,size).write(fullpathOut, function(err) {
-      if (err) this.logger.error(err);
+      if (err) {
+        reject(new Error("thumb di " + fullpathIn + ": " + (err.message || err)));
+        return;
+      }
+      resolve();
     });
+  });
+}
 
-    // fs.writeFileSync(fullpathOut, imagemagick.convert({
-    //   srcData: fs.readFileSync(fullpathIn),
-    //   quality: 95,
-    //   width: size,
-    //   height: size,
-    //   resizeStyle: 'aspectfit',
-    //   format: 'JPEG'
-    // }));
+// Thumb di tutti i file di una cartella, generati in serie: la build della
+// sezione termina solo quando sono tutti su disco (una sola make build).
+async function creaThumbCartella(loggerParent, dir, size) {
+  if (!fs.existsSync(dir)) {
+    return;
+  }
+  const daGenerare = fs.readdirSync(dir).filter(function (file) {
+    return file.indexOf('thumb_') < 0 && path.basename(file, path.extname(file)).indexOf('.') < 0;
+  });
+  for (const file of daGenerare) {
+    await createThumb(loggerParent, path.join(dir, file), path.join(dir, 'thumb_' + file), size);
   }
 }
 
@@ -63,7 +79,7 @@ function concat_ifnotempty($str, $append){
   return $str;
 }
 
-Angolisq.prototype.build = function () {
+Angolisq.prototype.build = async function () {
 
   this.logger.info('Angolisq', 'build');
 
@@ -84,9 +100,10 @@ Angolisq.prototype.build = function () {
     fs.writeFileSync(path.join(__dirname, 'src/' + sqname + '.hbs'), contents);
     for (var keyM in members) {
       var squadrigliere = members[keyM];
-      var filename = (squadrigliere.nome + squadrigliere.cognome).toLowerCase();
-      filename = filename.replace(/\s/g, "");
-      filename = filename.replace(/\'/g, "");
+      // il filename della pagina è la chiave del member (id ASCII già
+      // calcolato da genera_anagrafica): il link {{@key}}.html in sq.hbs
+      // porta esattamente qui, cognomi accentati compresi
+      const filename = keyM;
       this.logger.info('found: ' + filename);
       const desc_name = squadrigliere.nome + " " + squadrigliere.cognome;
       var contents = fs.readFileSync(path.join(__dirname, 'template/squadrigliere.hbs'), 'utf8');
@@ -114,46 +131,23 @@ Angolisq.prototype.build = function () {
 
   const loggerParent = this.logger;
 
-
+  // thumb attese in serie: alla fine di build() sono tutti su disco
   // guidoni
-  const dirGuidoni = path.join(__dirname, 'materiale/guidoni/');
-  if (fs.existsSync(dirGuidoni) ){
-    fs.readdirSync(dirGuidoni).forEach(function(file){
-      if ( file.indexOf('thumb_') < 0 && path.basename(file, path.extname(file)).indexOf('.') < 0 ) {
-        const newFilename = 'thumb_' + path.basename(file);
-        createThumb(loggerParent, path.join(dirGuidoni, file), path.join(dirGuidoni, newFilename), 150 );
-      }
-    });  
-  }
+  await creaThumbCartella(loggerParent, path.join(__dirname, 'materiale/guidoni/'), 150);
 
   // squadriglia
-  const dirSquadriglia = path.join(__dirname, 'materiale/squadriglia/');
-  if (fs.existsSync(dirSquadriglia)){
-    fs.readdirSync(dirSquadriglia).forEach(function (file) {
-      if (file.indexOf('thumb_') < 0 && path.basename(file, path.extname(file)).indexOf('.') < 0) {
-        const newFilename = 'thumb_' + path.basename(file);
-        createThumb(loggerParent, path.join(dirSquadriglia, file), path.join(dirSquadriglia, newFilename), 450);
-      }
-    });  
-  }
+  await creaThumbCartella(loggerParent, path.join(__dirname, 'materiale/squadriglia/'), 450);
 
   // reparto
-  const dirReparto = path.join(__dirname, 'materiale/reparto/');
-  if (fs.existsSync(dirReparto)){
-    fs.readdirSync(dirReparto).forEach(function (file) {
-      if (file.indexOf('thumb_') < 0 && path.basename(file, path.extname(file)).indexOf('.') < 0) {
-        const newFilename = 'thumb_' + path.basename(file);
-        createThumb(loggerParent, path.join(dirReparto, file), path.join(dirReparto, newFilename), 150);
-      }
-    });  
-  }
+  await creaThumbCartella(loggerParent, path.join(__dirname, 'materiale/reparto/'), 150);
 
   //sovrascrivo con una thumb piu grande
   //fsextra.removeSync(path.join(dirReparto, 'thumb_fotogruppo.jpg'));
-  if (fs.existsSync(dirReparto)) {
-    createThumb(loggerParent, path.join(dirReparto, 'fotogruppo.jpg'), path.join(dirReparto, 'thumb_fotogruppo.jpg'), 650);
+  const fotogruppo = path.join(__dirname, 'materiale/reparto/fotogruppo.jpg');
+  if (fs.existsSync(fotogruppo)) {
+    await createThumb(loggerParent, fotogruppo, path.join(__dirname, 'materiale/reparto/thumb_fotogruppo.jpg'), 650);
   }
-  
+
 }
 
 Angolisq.prototype.clean = function () {

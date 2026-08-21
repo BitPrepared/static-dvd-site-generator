@@ -60,222 +60,237 @@ function leggiDatiObbligatori(elenco) {
   return dati;
 }
 
-const { materialeAngoliSq, materialeWorkshop, materialeDocumentiGenerali, materialeVarie, materialeAltreAttivita, squadriglie, categories } = leggiDatiObbligatori(DATI_OBBLIGATORI);
+// build() delle sezioni con thumb è async: il flusso attende che i
+// thumb siano su disco prima del rendering (change fix-thumb-logger)
+async function main() {
+  const { materialeAngoliSq, materialeWorkshop, materialeDocumentiGenerali, materialeVarie, materialeAltreAttivita, squadriglie, categories } = leggiDatiObbligatori(DATI_OBBLIGATORI);
 
-const authorizedExts = ['jpg', 'jpeg', 'svg', 'png', 'gif', 'JPG', 'JPEG', 'SVG', 'PNG', 'GIF'];
+  const authorizedExts = ['jpg', 'jpeg', 'svg', 'png', 'gif', 'JPG', 'JPEG', 'SVG', 'PNG', 'GIF'];
 
-var menu = [
-  {
-    'url': 'esercitazioni/index.html',
-    'alt': 'Esercitazioni'
-  },
-  {
-    'url': 'angolisq/index.html',
-    'alt': 'Angoli di sq.'
-  },
-  {
-    'url': 'diariofotografico/index.html',
-    'alt': 'Diario fotografico'
-  },
-  {
-    'url': 'documenti/index.html',
-    'alt': 'Documenti generali'
-  },
-  {
-    'url': 'programmi/index.html',
-    'alt': 'Programmi ed utilità'
-  },
-  {
-    'url': 'varie/index.html',
-    'alt': 'Varie'
-  }
-];
+  var menu = [
+    {
+      'url': 'esercitazioni/index.html',
+      'alt': 'Esercitazioni'
+    },
+    {
+      'url': 'angolisq/index.html',
+      'alt': 'Angoli di sq.'
+    },
+    {
+      'url': 'diariofotografico/index.html',
+      'alt': 'Diario fotografico'
+    },
+    {
+      'url': 'documenti/index.html',
+      'alt': 'Documenti generali'
+    },
+    {
+      'url': 'programmi/index.html',
+      'alt': 'Programmi ed utilità'
+    },
+    {
+      'url': 'varie/index.html',
+      'alt': 'Varie'
+    }
+  ];
 
-var logger = new Logger();
+  var logger = new Logger();
 
-var home = new Home(logger);
-const missingHome = home.check();
-missingHome.forEach((currentValue, index, arr) => {
-  const responsabili = currentValue.responsabile.join(',');
-  logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-});
-home.clean();
-home.build();
-
-var esercitazioni = new Esercitazioni(logger, materialeWorkshop, materialeAltreAttivita);
-const missing = esercitazioni.check();
-missing.forEach((currentValue, index, arr) => {
-  if (currentValue.responsabile) {
-    const responsabili = currentValue.responsabile.join(',');
-    logger.warn('missing: '+currentValue.title+'! Responsabile ['+responsabili+']');
-  } else {
-    logger.warn('missing: ' + currentValue.description + '!');
-  }
-});
-
-var angolisq = new Angolisq(logger, squadriglie, materialeAngoliSq);
-const missingAngoli = angolisq.check();
-missingAngoli.forEach((currentValue, index, arr) => {
-  const responsabili = currentValue.responsabile.join(',');
-  logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-});
-angolisq.clean();
-angolisq.build();
-
-var programmi = new Programmi(logger);
-angolisq.check();
-
-var documentiGenerali = new DocumentiGenerali(logger, materialeDocumentiGenerali);
-const missingDocumentiGenerali = documentiGenerali.check();
-missingDocumentiGenerali.forEach((currentValue, index, arr) => {
-  if (currentValue.responsabile) {
+  var home = new Home(logger);
+  const missingHome = home.check();
+  missingHome.forEach((currentValue, index, arr) => {
     const responsabili = currentValue.responsabile.join(',');
     logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-  } else {
-    logger.warn('missing: ' + currentValue.description + '!');
-  }
-});
-documentiGenerali.build();
+  });
+  home.clean();
+  home.build();
 
-var varie = new Varie(logger, materialeVarie);
-const missingVarie = varie.check();
-missingVarie.forEach((currentValue, index, arr) => {
-  if (currentValue.responsabile) {
+  var esercitazioni = new Esercitazioni(logger, materialeWorkshop, materialeAltreAttivita);
+  const missing = esercitazioni.check();
+  missing.forEach((currentValue, index, arr) => {
+    if (currentValue.responsabile) {
+      const responsabili = currentValue.responsabile.join(',');
+      logger.warn('missing: '+currentValue.title+'! Responsabile ['+responsabili+']');
+    } else {
+      logger.warn('missing: ' + currentValue.description + '!');
+    }
+  });
+
+  var angolisq = new Angolisq(logger, squadriglie, materialeAngoliSq);
+  const missingAngoli = angolisq.check();
+  missingAngoli.forEach((currentValue, index, arr) => {
     const responsabili = currentValue.responsabile.join(',');
     logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-  } else {
-    logger.warn('missing: ' + currentValue.description + '!');
+  });
+  angolisq.clean();
+  await angolisq.build();
+
+  var programmi = new Programmi(logger);
+  angolisq.check();
+
+  var documentiGenerali = new DocumentiGenerali(logger, materialeDocumentiGenerali);
+  const missingDocumentiGenerali = documentiGenerali.check();
+  missingDocumentiGenerali.forEach((currentValue, index, arr) => {
+    if (currentValue.responsabile) {
+      const responsabili = currentValue.responsabile.join(',');
+      logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
+    } else {
+      logger.warn('missing: ' + currentValue.description + '!');
+    }
+  });
+  documentiGenerali.build();
+
+  var varie = new Varie(logger, materialeVarie);
+  const missingVarie = varie.check();
+  missingVarie.forEach((currentValue, index, arr) => {
+    if (currentValue.responsabile) {
+      const responsabili = currentValue.responsabile.join(',');
+      logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
+    } else {
+      logger.warn('missing: ' + currentValue.description + '!');
+    }
+  });
+
+  var diariofotografico = new DiarioFotografico(logger, authorizedExts ,categories);
+  const missingDiario = diariofotografico.check();
+  missingDiario.forEach((currentValue, index, arr) => {
+    if (currentValue.responsabile) {
+      const responsabili = currentValue.responsabile.join(',');
+      logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
+    } else {
+      logger.warn('missing: ' + currentValue.description + '!');
+    }
+  });
+
+  diariofotografico.clean();
+  await diariofotografico.build();
+
+  const env_debug = ['true', '1', 'yes'].includes((process.env.DEBUG || '').toLowerCase());
+
+  logger.info('PrepareResources', 'prepare config');
+
+  const outputdir = path.join(__dirname, 'build');
+
+  var config = {
+    title: 'Bit Prepared',
+    description: 'Campo di Competenza Informatica e Tecniche Scout',
+    url: './',
+    src: path.join(__dirname, 'src'),
+    output: outputdir,
+    layouts: path.join(__dirname, 'layouts'),
+    partials: path.join(__dirname, 'partials'),
+    assets: path.join(__dirname, 'assets'),
+    menu: menu,
+    squadriglie: squadriglie,
+    esercitazioni: esercitazioni.templateVar(),
+    fotosrc: path.join(outputdir, 'diariofotografico/foto'),
+    categories: categories,
+    excludeFileToSync: ['.DS_Store', 'Thumbs.db','.gitignore'],
+    authorizedExts: authorizedExts,
+    debug_enable: env_debug
   }
-});
 
-var diariofotografico = new DiarioFotografico(logger, authorizedExts ,categories);
-const missingDiario = diariofotografico.check();
-missingDiario.forEach((currentValue, index, arr) => {
-  if (currentValue.responsabile) {
-    const responsabili = currentValue.responsabile.join(',');
-    logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-  } else {
-    logger.warn('missing: ' + currentValue.description + '!');
-  }
-});
+  logger.info('PrepareResources', 'prepare directory');
 
-diariofotografico.clean();
-diariofotografico.build();
+  rimraf.sync(config.src);
+  rimraf.sync(config.output);
+  fs.ensureDirSync(config.src);
 
-const env_debug = ['true', '1', 'yes'].includes((process.env.DEBUG || '').toLowerCase());
+  /**
+   * Copia ricorsivamente i file da src a dest.
+   * Se `lowercase` è true, i nomi di file e cartelle saranno trasformati in minuscolo.
+   */
+  function prepareResources(logger, config, title, src, dest, lowercase = false) {
+    logger.info('PrepareResources', title);
+    try {
+      fs.ensureDirSync(dest);
 
-logger.info('PrepareResources', 'prepare config');
+      const items = fs.readdirSync(src, { withFileTypes: true });
 
-const outputdir = path.join(__dirname, 'build');
+      for (const item of items) {
+        const originalName = item.name;
+        const normalized = originalName.normalize('NFD'); // decomposizione
 
-var config = {
-  title: 'Bit Prepared',
-  description: 'Campo di Competenza Informatica e Tecniche Scout',
-  url: './',
-  src: path.join(__dirname, 'src'),
-  output: outputdir,
-  layouts: path.join(__dirname, 'layouts'),
-  partials: path.join(__dirname, 'partials'),
-  assets: path.join(__dirname, 'assets'),
-  menu: menu,
-  squadriglie: squadriglie,
-  esercitazioni: esercitazioni.templateVar(),
-  fotosrc: path.join(outputdir, 'diariofotografico/foto'),
-  categories: categories,
-  excludeFileToSync: ['.DS_Store', 'Thumbs.db','.gitignore'],
-  authorizedExts: authorizedExts,
-  debug_enable: env_debug
-}
+        // Se è nella lista di esclusione, salta
+        if (config.excludeFileToSync.includes(originalName)) continue;
 
-logger.info('PrepareResources', 'prepare directory');
+        const targetName = lowercase ? originalName.toLowerCase() : originalName;
 
-rimraf.sync(config.src);
-rimraf.sync(config.output);
-fs.ensureDirSync(config.src);
+        const srcPath = path.join(src, originalName);
+        const destPath = path.join(dest, targetName);
 
-/**
- * Copia ricorsivamente i file da src a dest.
- * Se `lowercase` è true, i nomi di file e cartelle saranno trasformati in minuscolo.
- */
-function prepareResources(logger, config, title, src, dest, lowercase = false) {
-  logger.info('PrepareResources', title);
-  try {
-    fs.ensureDirSync(dest);
+        if (/[̀-ͯ]/.test(normalized)) { // caratteri combinanti (accenti, tilde ecc.)
+          logger.error('File con accenti (combinati):', srcPath);
+        }
 
-    const items = fs.readdirSync(src, { withFileTypes: true });
-
-    for (const item of items) {
-      const originalName = item.name;
-      const normalized = originalName.normalize('NFD'); // decomposizione
-
-      // Se è nella lista di esclusione, salta
-      if (config.excludeFileToSync.includes(originalName)) continue;
-
-      const targetName = lowercase ? originalName.toLowerCase() : originalName;
-
-      const srcPath = path.join(src, originalName);
-      const destPath = path.join(dest, targetName);
-
-      if (/[̀-ͯ]/.test(normalized)) { // caratteri combinanti (accenti, tilde ecc.)
-        logger.error('File con accenti (combinati):', srcPath);
-      }
-
-      if (item.isDirectory()) {
-        prepareResources(logger, config, title, srcPath, destPath, lowercase); // ricorsivo
-      } else {
-        fs.ensureDirSync(path.dirname(destPath));
-        fs.copyFileSync(srcPath, destPath);
-        if ( config.debug_enable ){
-          logger.success(`${originalName} sync to ${destPath}`);
+        if (item.isDirectory()) {
+          prepareResources(logger, config, title, srcPath, destPath, lowercase); // ricorsivo
+        } else {
+          fs.ensureDirSync(path.dirname(destPath));
+          fs.copyFileSync(srcPath, destPath);
+          if ( config.debug_enable ){
+            logger.success(`${originalName} sync to ${destPath}`);
+          }
         }
       }
-    }
 
-    logger.success(`${title} completata!`);
-  } catch (err) {
-    logger.error(`${title} fallita!`);
-    console.error(err);
+      logger.success(`${title} completata!`);
+    } catch (err) {
+      logger.error(`${title} fallita!`);
+      console.error(err);
+    }
   }
+
+
+
+  prepareResources(logger, config, 'copy assets css', './assets/css', path.join(config.output, 'css'));
+
+  prepareResources(logger, config, 'copy first page src', home.src(), config.src);
+
+  prepareResources(logger, config, 'copy esercitazioni src', esercitazioni.src(), path.join(config.src, 'esercitazioni'));
+
+  prepareResources(logger, config, 'copy esercitazioni materiale', esercitazioni.srcAssets(), path.join(config.output, 'esercitazioni'));
+
+  prepareResources(logger, config, 'copy angoli src', angolisq.src(), path.join(config.src, 'angolisq'), true);
+
+  // FIXME: non copia la thumb della foto di gruppo
+  prepareResources(logger, config, 'copy angoli materiale', angolisq.srcAssets(), path.join(config.output, 'angolisq'), true);
+
+  prepareResources(logger, config, 'copy programmi src', programmi.src(), path.join(config.src, 'programmi'));
+
+  prepareResources(logger, config, 'copy documenti generali src', documentiGenerali.src(), path.join(config.src, 'documenti'));
+
+  // FIXME: il filename del ricordo campo non é preso dal json
+  prepareResources(logger, config, 'copy documenti generali materiale', documentiGenerali.srcAssets(), path.join(config.output, 'documenti'));
+
+  prepareResources(logger, config, 'copy varie src', varie.src(), path.join(config.src, 'varie'));
+
+  prepareResources(logger, config, 'copy varie materiale', varie.srcAssets(), path.join(config.output, 'varie'));
+
+  prepareResources(logger, config, 'copy diario fotografico src', diariofotografico.src(), path.join(config.src, 'diariofotografico'), true);
+
+  prepareResources(logger, config, 'copy diario fotografico materiale', diariofotografico.srcAssets(), path.join(config.output, 'diariofotografico'), true);
+
+  var generatore = new GeneratoreHTML(logger);
+
+  generatore.genera(config);
+
+  // logger.info('');
+  // logger.info(' ------------- ');
+  // logger.info(' test logging ');
+  // logger.info(' ------------- ');
+  // logger.info('');
+  //
+  // logger.test();
+
 }
 
-
-
-prepareResources(logger, config, 'copy assets css', './assets/css', path.join(config.output, 'css'));
-
-prepareResources(logger, config, 'copy first page src', home.src(), config.src);
-
-prepareResources(logger, config, 'copy esercitazioni src', esercitazioni.src(), path.join(config.src, 'esercitazioni'));
-
-prepareResources(logger, config, 'copy esercitazioni materiale', esercitazioni.srcAssets(), path.join(config.output, 'esercitazioni'));
-
-prepareResources(logger, config, 'copy angoli src', angolisq.src(), path.join(config.src, 'angolisq'), true);
-
-// FIXME: non copia la thumb della foto di gruppo
-prepareResources(logger, config, 'copy angoli materiale', angolisq.srcAssets(), path.join(config.output, 'angolisq'), true);
-
-prepareResources(logger, config, 'copy programmi src', programmi.src(), path.join(config.src, 'programmi'));
-
-prepareResources(logger, config, 'copy documenti generali src', documentiGenerali.src(), path.join(config.src, 'documenti'));
-
-// FIXME: il filename del ricordo campo non é preso dal json
-prepareResources(logger, config, 'copy documenti generali materiale', documentiGenerali.srcAssets(), path.join(config.output, 'documenti'));
-
-prepareResources(logger, config, 'copy varie src', varie.src(), path.join(config.src, 'varie'));
-
-prepareResources(logger, config, 'copy varie materiale', varie.srcAssets(), path.join(config.output, 'varie'));
-
-prepareResources(logger, config, 'copy diario fotografico src', diariofotografico.src(), path.join(config.src, 'diariofotografico'), true);
-
-prepareResources(logger, config, 'copy diario fotografico materiale', diariofotografico.srcAssets(), path.join(config.output, 'diariofotografico'), true);
-
-var generatore = new GeneratoreHTML(logger);
-
-generatore.genera(config);
-
-// logger.info('');
-// logger.info(' ------------- ');
-// logger.info(' test logging ');
-// logger.info(' ------------- ');
-// logger.info('');
-//
-// logger.test();
+main().catch(function (err) {
+  console.error('');
+  console.error('Generatore: build fallita:');
+  console.error(err && err.message ? err.message : err);
+  if (process.env.DEBUG && err && err.stack) {
+    console.error(err.stack);
+  }
+  process.exit(1);
+});

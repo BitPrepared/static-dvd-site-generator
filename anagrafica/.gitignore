@@ -2,3 +2,5 @@
 *.xls
 *.xlsx
 *.ods
+# eccezione: elenco di esempio con soli dati finti (mai dati veri, vedi §5)
+!elenco_ragazzi_example.csv

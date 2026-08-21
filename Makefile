@@ -4,26 +4,36 @@ VERSION=bullseye
 EXECUTOR ?= docker
 ifeq ($(EXECUTOR),podman)
 MOUNT_OPTION = :U
+USERNS_OPTION = --userns=keep-id
 else
 MOUNT_OPTION =
+USERNS_OPTION =
 endif
 DEBUG=False
+# 1 = anagrafica anonima: solo i nomi delle squadriglie, nessun dato ragazzo
+# nel json (make anagrafica ANONIMO=1)
+ANONIMO ?= 0
 
 # esistono cartelle con nomi di comando, quindi automaticamente viene skippato il comando pensando
 # sia stata fatta gia la compilazione, cosi le si ignora.
 .PHONY: build clean anagrafica
 
 build:
-	${EXECUTOR} run --rm -i --userns=keep-id -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -e DEBUG=$(DEBUG) -t $(IMAGE_NAME):$(VERSION) npm run build
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -e DEBUG=$(DEBUG) -t $(IMAGE_NAME):$(VERSION) npm run build
 
 bash:
-	${EXECUTOR} run --rm -i --userns=keep-id --entrypoint /bin/bash -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -t $(IMAGE_NAME):$(VERSION)
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint /bin/bash -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -t $(IMAGE_NAME):$(VERSION)
 
 init:
 	${EXECUTOR} build --build-arg USER_ID=$(shell id -u) --build-arg GROUP_ID=$(shell id -g) -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
 
+# anagrafica: gira nell'immagine del generatore (Node), script montato come
+# volume: modifiche live senza rifare make init (serve solo se cambiano le
+# dipendenze npm in static-dvd-site-generator/package.json).
+ANAGRAFICA_SCRIPT=anagrafica/genera_anagrafica.js
+
 anagrafica:
-	${EXECUTOR} run --rm -i -t -v "${PWD}/anagrafica:/usr/src/myapp$(MOUNT_OPTION)" -w /usr/src/myapp php:7.4-cli php anagrafica_da_csv.php > dati/squadriglie.json
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node -v "${PWD}/anagrafica:/usr/src/app/anagrafica$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -w /usr/src/app -e ANONIMO=$(ANONIMO) -t $(IMAGE_NAME):$(VERSION) $(ANAGRAFICA_SCRIPT)
 
 clean-docker:
 	${EXECUTOR} buildx prune
