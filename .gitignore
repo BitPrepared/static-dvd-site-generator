@@ -1,4 +1,7 @@
 build
+# snapshot del golden build (change aggiornamento-dipendenze): elenco+hash di
+# tutto il sito generato, materiale ragazzi compreso -> mai in git, come build/
+/golden/
 .DS_Store
 .config
 .claude
