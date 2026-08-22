@@ -51,16 +51,33 @@ su cartelle di altri utenti).
 
 ## 3. Durante il campo (il quotidiano)
 
-Le foto arrivano dalla directory condivisa dello staff. Preparazione
-(script di preparazione, prerequisito esterno in `~/scripts/`, non nel repo):
+Le foto arrivano dalla directory condivisa dello staff
+(default `~/share_disks/staff/foto`, sovrascrivibile con `FOTO_SRC=`).
+Un solo comando fa tutto: rotazione/rinomina con lo script esterno
+(prerequisito fuori repo: viene cercato come `ruota_rinomina_immagini.sh`,
+nome sul server, oppure `autoRuotaImmagini.sh`, nome in locale, in
+`~/scripts`, `~/Scripts`, `~/script` o `~/Script`; percorso forzabile con
+`RUOTA_SCRIPT=`) e copia fedele 1:1
+che mantiene la struttura `giorno/categoria`. Incrementale: copia solo le
+foto nuove o modificate, non cancella mai nulla. Vengono prese solo le
+immagini (default: jpg jpeg png gif bmp tif tiff webp heic heif, si amplia
+o restringe con `FOTO_ESTENSIONI=`): readme e file vari della share restano
+fuori e le cartelle senza immagini non vengono nemmeno create.
 
-    ~/scripts/ruota_rinomina_immagini.sh ~/share_disks/staff/foto
-    ~/scripts/convert_image_smp.sh ~/share_disks/staff/foto 1600 \
-        ~/.../dvd/diariofotografico/materiale/foto/ UPDATE
+    make foto
+
+Import continuo mentre le foto arrivano (controllo ogni 5 minuti,
+`Ctrl-C` per fermare):
+
+    make foto-watch                       # oppure: make foto-watch WATCH_INTERVAL=60
 
 Le foto vanno in `dvd/diariofotografico/materiale/foto/giorno/categoria`.
 Il sito mostra solo le categorie configurate in
-`dati/categorieDiarioFotografico.json`.
+`dati/categorieDiarioFotografico.json`. Se serve il ridimensionamento a
+1600px resta disponibile il vecchio passaggio manuale:
+`~/scripts/convert_image_smp.sh <sorgente> 1600 dvd/diariofotografico/materiale/foto/ UPDATE`.
+
+Test rapidi dell'import: `bash scripts/test_importa_foto.sh`.
 
     make build    # una sola volta: i thumb delle foto sono attesi
                   # prima del rendering, il sito esce completo

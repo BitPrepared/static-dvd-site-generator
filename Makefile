@@ -19,7 +19,7 @@ ANONIMO ?= 0
 
 # esistono cartelle con nomi di comando, quindi automaticamente viene skippato il comando pensando
 # sia stata fatta gia la compilazione, cosi le si ignora.
-.PHONY: build clean anagrafica font footer golden-salva golden-confronta check-executor
+.PHONY: build clean anagrafica font footer golden-salva golden-confronta check-executor foto foto-watch
 
 # primo controllo di ogni target che usa il container: runtime presente?
 check-executor:
@@ -119,6 +119,22 @@ clean:
 
 open:
 	qutebrowser file://${PWD}/build/index.html
+
+# foto: importa le foto dello staff dalla share (Readme.md §3): rotazione/
+# rinomina con lo script esterno + copia fedele in
+# dvd/diariofotografico/materiale/foto/giorno/categoria. Incrementale: solo
+# le foto nuove o modificate. Gira sull'host, NON usa il container.
+# Lo script di rotazione ha nomi diversi fra le macchine (server:
+# ruota_rinomina_immagini.sh, locale: autoRuotaImmagini.sh): importa_foto.sh
+# li prova entrambi; RUOTA_SCRIPT= forza un percorso preciso.
+FOTO_SRC ?= $(HOME)/share_disks/staff/foto
+WATCH_INTERVAL ?= 300
+
+foto:
+	@env $(if $(RUOTA_SCRIPT),RUOTA_SCRIPT="$(RUOTA_SCRIPT)") $(if $(FOTO_ESTENSIONI),FOTO_ESTENSIONI="$(FOTO_ESTENSIONI)") bash scripts/importa_foto.sh "$(FOTO_SRC)"
+
+foto-watch:  # import continuo mentre le foto arrivano; Ctrl-C per fermare
+	@env $(if $(RUOTA_SCRIPT),RUOTA_SCRIPT="$(RUOTA_SCRIPT)") $(if $(FOTO_ESTENSIONI),FOTO_ESTENSIONI="$(FOTO_ESTENSIONI)") WATCH_INTERVAL="$(WATCH_INTERVAL)" bash scripts/importa_foto.sh --watch "$(FOTO_SRC)"
 
 
 # 
