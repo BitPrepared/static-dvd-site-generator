@@ -83,6 +83,21 @@ Per l'output verboso: `DEBUG=True` nel Makefile (o `make DEBUG=True build`).
 4. Archivia il materiale dell'anno (foto/video) dove archivi di norma:
    in git non va mai
 
+### 4.1 Update della toolchain (solo post-campo)
+
+Base image, dipendenze npm e simili si toccano SOLO a campo concluso,
+un passo per volta. Prima di ogni update si salva il riferimento:
+
+    make build && make golden-salva
+
+e dopo OGNI passo (base image, bump npm, rimozioni):
+
+    make build && make golden-confronta    # exit 0 = sito identico
+
+Lo snapshot sta in `golden/` (gitignored: contiene l'elenco di tutto il
+sito generato). Se una differenza è voluta, rigenera lo snapshot con
+`make golden-salva`. Dettagli nell'intestazione di `scripts/golden.js`.
+
 ## 5. Privacy — regole non negoziabili
 
 Foto (`dvd/*/materiale`), pagine di contenuto (`dvd/*/src`),

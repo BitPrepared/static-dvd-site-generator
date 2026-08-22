@@ -1,4 +1,8 @@
-FROM node:18.2.0-bullseye
+# Base image major+codename (design D1, change aggiornamento-dipendenze):
+# riceve le patch di sicurezza a ogni make init senza edit del Dockerfile.
+# Bookworm e' obbligatorio finche' c'e' gm: mantiene ImageMagick 6 come il
+# vecchio bullseye (trixie porterebbe IM7, incompatible col binding gm, D2).
+FROM node:24-bookworm
 
 ARG USER_ID
 ARG GROUP_ID

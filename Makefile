@@ -1,5 +1,5 @@
 IMAGE_NAME="bitprepared/dvd-site-generator"
-VERSION=bullseye
+VERSION=bookworm
 # runtime container: autodetect (docker, altrimenti podman), sovrascrivibile
 # da ambiente o riga di comando: EXECUTOR=podman make build
 ifeq ($(origin EXECUTOR),undefined)
@@ -19,7 +19,7 @@ ANONIMO ?= 0
 
 # esistono cartelle con nomi di comando, quindi automaticamente viene skippato il comando pensando
 # sia stata fatta gia la compilazione, cosi le si ignora.
-.PHONY: build clean anagrafica font footer check-executor
+.PHONY: build clean anagrafica font footer golden-salva golden-confronta check-executor
 
 # primo controllo di ogni target che usa il container: runtime presente?
 check-executor:
@@ -75,6 +75,30 @@ footer: check-executor
 	  -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" \
 	  -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" \
 	  -w /usr/src/app -t $(IMAGE_NAME):$(VERSION) scripts/genera_footer.js $(if $(DATE),"$(DATE)",)
+
+# golden build (change aggiornamento-dipendenze, spec verifica-regressione-build):
+# snapshot/confronto dell'output per verificare che un cambio di toolchain
+# produca lo stesso sito. Tool ausiliario FUORI dal percorso di make build;
+# script montato a volume come footer/anagrafica (modifiche live senza make
+# init). Lo snapshot va in golden/ (gitignored: contiene l'elenco di tutto
+# il sito generato, materiale ragazzi compreso). Uso:
+#   make golden-salva      dopo una build di riferimento
+#   make golden-confronta  dopo ogni passo di update
+GOLDEN_MANIFEST=golden/manifest.json
+
+golden-salva: check-executor
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node \
+	  -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" \
+	  -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" \
+	  -v "${PWD}/golden:/usr/src/app/golden$(MOUNT_OPTION)" \
+	  -w /usr/src/app -t $(IMAGE_NAME):$(VERSION) scripts/golden.js salva build $(GOLDEN_MANIFEST)
+
+golden-confronta: check-executor
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node \
+	  -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" \
+	  -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" \
+	  -v "${PWD}/golden:/usr/src/app/golden$(MOUNT_OPTION)" \
+	  -w /usr/src/app -t $(IMAGE_NAME):$(VERSION) scripts/golden.js confronta build $(GOLDEN_MANIFEST)
 
 # anagrafica: gira nell'immagine del generatore (Node), script montato come
 # volume: modifiche live senza rifare make init (serve solo se cambiano le
