@@ -12,3 +12,7 @@ build
 # changes OpenSpec intermedi mai in git: solo l'archivio dei change conclusi
 openspec/changes/*
 !openspec/changes/archive/
+# archivio del materiale fuori pipeline (change foto-segnaletiche-codificate):
+# sample foto segnaletiche del passato con nomi veri nei filename -> come il
+# resto del materiale, mai in git
+/materiale_archiviato/

@@ -46,6 +46,29 @@ const RIGA_CHIARA = [
   '"03/09/2007"', '"0231234568"', '"chiara@topolinia.it"', '""'
 ].join(';');
 
+// Riga di un quarto ragazzo finto, SENza foto segnaletica: non compare nel
+// registro dell'import
+const RIGA_MARIA = [
+  '"004"', '"Maria Luigia"', '"Bianchi"', '"F"', '""', '"Aquile"', '"Topos"',
+  '"Topolinia 1"', '"Reggio Emilia"', '"Alta"', '"9"', '"42019"',
+  '"Topolinia"', '"Reggio Emilia"', '"veneto"', '"ORO"', '""',
+  '"01/01/2007"', '""', '"maria@topolinia.it"', '""'
+].join(';');
+
+// Registro prodotto dall'import per i ragazzi finti dell'example
+// (change foto-segnaletiche-codificate)
+const REGISTRO_FINTO = [
+  'nome;cognome;squadriglia;codice',
+  'pippo;zoo;oro;pz1_oro',
+  'ginevra;pero;oro;gp1_oro',
+  'chiara;dellorto;blu;cd1_blu',
+  ''
+].join('\n');
+
+function scriviRegistro(tmp, contenuto) {
+  fs.writeFileSync(path.join(tmp, 'anagrafica', 'registro_segnaletiche.csv'), contenuto);
+}
+
 function tmpDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'anagrafica-test-'));
 }
@@ -233,6 +256,124 @@ function preparaCsv(tmp, contenuto) {
     fs.writeFileSync(path.join(tmp, 'anagrafica', 'elenco_ragazzi.csv'), contenuto);
   }
 }
+
+// ------------------------------------- change foto-segnaletiche-codificate
+
+test('registro (unit): members chiavi per codice, tutti i campi del CSV conservati', () => {
+  const csv = INTESTAZIONE + '\n' + RIGA_PIPPO + '\n' + RIGA_GINEVRA + '\n' + RIGA_CHIARA + '\n';
+  const registro = genera.parseRegistroContenuto(REGISTRO_FINTO);
+  const squadriglie = genera.generaSquadriglie(genera.leggiCsv(csv).righe,
+    { anonimo: false, registro });
+
+  assert.deepEqual(
+    Object.keys(squadriglie.oro.members),
+    ['pz1_oro', 'gp1_oro'],
+    'le chiavi sono i codici dell\'import, nell\'ordine del CSV'
+  );
+  assert.deepEqual(Object.keys(squadriglie.blu.members), ['cd1_blu']);
+
+  const pippo = squadriglie.oro.members.pz1_oro;
+  assert.equal(pippo.nome, 'Pippo');
+  assert.equal(pippo.cognome, 'Zoo');
+  assert.equal(pippo.dtnascita, '24/07/2007');
+  assert.equal(pippo.email, 'pippo@topolinia.it');
+  assert.equal(pippo.squadriglia, 'oro');
+});
+
+test('registro (unit): ragazzo nel CSV senza foto -> member senza codice (id legacy)', () => {
+  const csv = INTESTAZIONE + '\n' + RIGA_PIPPO + '\n' + RIGA_MARIA + '\n';
+  const squadriglie = genera.generaSquadriglie(genera.leggiCsv(csv).righe,
+    { anonimo: false, registro: genera.parseRegistroContenuto(REGISTRO_FINTO) });
+
+  assert.deepEqual(Object.keys(squadriglie.oro.members).sort(), ['marialuigiabianchi', 'pz1_oro'],
+    'chi ha una foto usa il codice, chi non ce l\'ha resta sull\'identificativo nomecognome');
+});
+
+test('valvola (unit): registro assente -> chiavi legacy nomecognome, identico a oggi', () => {
+  const csv = INTESTAZIONE + '\n' + RIGA_PIPPO + '\n' + RIGA_GINEVRA + '\n' + RIGA_CHIARA + '\n';
+  const conValvola = genera.generaSquadriglie(genera.leggiCsv(csv).righe,
+    { anonimo: false, registro: null });
+
+  // confronto con la generazione "storica" (nessun concetto di registro)
+  const legacy = genera.generaSquadriglie(genera.leggiCsv(csv).righe, { anonimo: false });
+
+  assert.deepEqual(conValvola, legacy);
+  assert.deepEqual(Object.keys(conValvola.oro.members), ['pippozoo', 'ginevrapero']);
+});
+
+test('anonima (unit): col registro i members portano i soli codici con foto', () => {
+  const csv = INTESTAZIONE + '\n' + RIGA_PIPPO + '\n' + RIGA_GINEVRA + '\n'
+    + RIGA_CHIARA + '\n' + RIGA_MARIA + '\n';
+  const squadriglie = genera.generaSquadriglie(genera.leggiCsv(csv).righe,
+    { anonimo: true, registro: genera.parseRegistroContenuto(REGISTRO_FINTO) });
+
+  // Maria non ha foto: in anonima non compare; gli altri solo codice
+  assert.deepEqual(squadriglie.oro, { name: 'oro', members: { pz1_oro: {}, gp1_oro: {} } });
+  assert.deepEqual(squadriglie.blu, { name: 'blu', members: { cd1_blu: {} } });
+});
+
+test('anonima (unit): senza registro members vuoti come nella pipeline precedente', () => {
+  const csv = INTESTAZIONE + '\n' + RIGA_PIPPO + '\n';
+  const squadriglie = genera.generaSquadriglie(genera.leggiCsv(csv).righe,
+    { anonimo: true, registro: null });
+
+  assert.deepEqual(squadriglie.oro, { name: 'oro', members: {} });
+});
+
+test('registro (e2e): json reale chiavi per codice; riga di registro fuori CSV -> warning, exit 0', () => {
+  const tmp = tmpDir();
+  try {
+    preparaCsv(tmp, INTESTAZIONE + '\n' + RIGA_PIPPO + '\n');
+    // Ginevra nel registro ma non nel CSV: il warning deve nominarla
+    scriviRegistro(tmp, REGISTRO_FINTO);
+    const esito = lanciaScript([], { cwd: tmp });
+    const scritto = JSON.parse(fs.readFileSync(path.join(tmp, 'dati', 'squadriglie.json'), 'utf8'));
+
+    assert.equal(esito.status, 0, esito.stderr);
+    assert.deepEqual(Object.keys(scritto.oro.members), ['pz1_oro']);
+    assert.match(esito.stderr, /gp1_oro/, 'il warning nomina il codice senza corrispondenza');
+    assert.match(esito.stderr, /ginevra/i, '...e anche l\'identita\'');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('registro (e2e): file assente -> valvola, json identico alle chiavi nomecognome', () => {
+  const tmp = tmpDir();
+  try {
+    preparaCsv(tmp, INTESTAZIONE + '\n' + RIGA_GINEVRA + '\n');
+    const esito = lanciaScript([], { cwd: tmp });
+    const scritto = JSON.parse(fs.readFileSync(path.join(tmp, 'dati', 'squadriglie.json'), 'utf8'));
+
+    assert.equal(esito.status, 0, esito.stderr);
+    assert.deepEqual(Object.keys(scritto.oro.members), ['ginevrapero']);
+    assert.match(esito.stderr, /registro/i, 'diagnostica: dichiara che gira senza registro');
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('anonima (e2e): ANONIMO=1 col registro -> soli codici, grep anti-dati sul json', () => {
+  const tmp = tmpDir();
+  try {
+    preparaCsv(tmp, INTESTAZIONE + '\n' + RIGA_PIPPO + '\n' + RIGA_GINEVRA + '\n' + RIGA_CHIARA + '\n');
+    scriviRegistro(tmp, REGISTRO_FINTO);
+    const esito = lanciaScript([], { cwd: tmp, anonimo: true });
+    const scritto = fs.readFileSync(path.join(tmp, 'dati', 'squadriglie.json'), 'utf8');
+
+    assert.equal(esito.status, 0, esito.stderr);
+    for (const valore of ['Pippo', 'Zoo', 'Ginevra', 'Però', 'Chiara', 'Dell',
+      'pippo@topolinia.it', '12345678901', 'Topolinia']) {
+      assert.ok(!scritto.includes(valore), `il json anonimo non deve contenere '${valore}'`);
+    }
+    assert.deepEqual(JSON.parse(scritto), {
+      oro: { name: 'oro', members: { pz1_oro: {}, gp1_oro: {} } },
+      blu: { name: 'blu', members: { cd1_blu: {} } }
+    });
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
 
 test('diagnostica: CSV assente -> exit != 0, messaggio con il file atteso, nessun json scritto', () => {
   const tmp = tmpDir();

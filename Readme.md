@@ -41,10 +41,14 @@ su cartelle di altri utenti).
 2. `make anagrafica` → genera `dati/squadriglie.json` in modalità reale
    (squadriglie ricavate dal CSV, tutti i campi dei ragazzi)
    `make anagrafica ANONIMO=1` → json anonimo: solo i nomi delle
-   squadriglie, `members` vuoti (riferimento:
+   squadriglie e, se è presente il registro dei codici, gli identificativi
+   di chi ha una foto segnaletica (riferimento:
    `dati/squadriglie.example-anonima.json`). Il sito generato mantiene
    le pagine squadriglia con foto, urlo e hike ma nessuna scheda ragazzo:
    si può condividere senza dati dei ragazzi.
+   Per una prova con le foto codificate copia anche
+   `anagrafica/registro_segnaletiche_example.csv` come
+   `anagrafica/registro_segnaletiche.csv` (dati finti).
 3. Aggiorna i dati dell'anno: `dati/categorieDiarioFotografico.json`
    (giorni e categorie del diario) e i `dati/materiale*.json`
 4. Prepara le pagine di contenuto `dvd/*/src/*.hbs`
@@ -78,6 +82,70 @@ Il sito mostra solo le categorie configurate in
 `~/scripts/convert_image_smp.sh <sorgente> 1600 dvd/diariofotografico/materiale/foto/ UPDATE`.
 
 Test rapidi dell'import: `bash scripts/test_importa_foto.sh`.
+
+### Foto segnaletiche codificate (`make segnaletiche`)
+
+Le foto segnaletiche arrivano sulla share dello staff (default
+`~/share_disks/staff/segnaletiche`, sovrascrivibile con `SEGNALETICHE_SRC=`)
+con filename **obbligatorio**:
+
+    nome_cognome_squadriglia.<ext>      # es. mario_rossi_blu.jpg
+
+primo campo = nome, campi intermedi = cognome, ultimo = squadriglia (minimo
+3 campi separati da `_`). Un file fuori formato (es. `IMG_1234.jpg`) viene
+rifiutato con un messaggio che mostra il formato atteso: niente import
+silenziosi. A ogni ragazzo l'import assegna **una volta sola** un codice
+stabile `<iniziali><progressivo>_<squadriglia>` (es. `mr1_blu`), copia la
+foto rinominata in `dvd/angolisq/materiale/reparto/<codice>.<ext>` e aggiorna
+il registro `anagrafica/registro_segnaletiche.csv` (gitignored, vedi sotto).
+
+    make segnaletiche
+
+Incrementale e non distruttivo, lo stesso patto di `make foto`:
+
+- un **re-import** della stessa persona riusa il suo codice (nessuna riga
+  doppia nel registro);
+- un **ritake** (foto rifatta e rimessa sulla share) sovrascrive la copia
+  locale: last wins;
+- una foto **ritirata** dalla share non cancella né la copia in `reparto/`
+  né la riga di registro;
+- l'incrocio con l'anagrafica (`elenco_ragazzi.csv`, per nome+cognome+
+  squadriglia) è silenzioso quando torna; in caso di mismatch arriva un
+  warning con il file coinvolto ma l'import comunque si completa.
+
+Correggere un mismatch: tipicamente è un typo nel filename (`mario_rossii_blu`)
+o un ragazzo mancante nell'export CSV. Si sistema la causa (filename sulla
+share oppure export CSV); se era stato creato un codice sbagliato, si
+rimuovono la copia in `reparto/` e la relativa riga dal registro con un
+editor di testo, poi si rilancia l'import: il ragazzo riparte con il codice
+giusto. Test rapidi: `bash scripts/test_importa_segnaletiche.sh`.
+
+Dopo l'import la catena è sempre:
+
+    make segnaletiche && make anagrafica && make build
+
+In modalità anonima (`make anagrafica ANONIMO=1`) le pagine squadriglia
+mostrano la griglia delle foto segnaletiche per **codice**: nessun nome, URL
+e filename parlano la lingua dei codici. In modalità reale i contenuti restano
+quelli del CSV; anche lì URL e foto usano il codice, non il nome.
+
+#### Il registro dei codici (`anagrafica/registro_segnaletiche.csv`)
+
+Il registro rende eterno il legame "codice = ragazzo": colonne
+`nome;cognome;squadriglia;codice`, una riga per ragazzo, scritta dall'import
+solo in appensione.
+
+- **Sopravvive** a `make clean` e alle build: i target lo leggono, solo
+  l'import lo scrive.
+- **Non viaggia in git** (contiene nomi veri, come il CSV): va sincronizzato
+  via rsync/scp fra le macchine di fiducia ESATTAMENTE come
+  `elenco_ragazzi.csv`.
+- **Non è rigenerabile a posteriori**: se lo si perde, un re-import riassegna
+  i progressivi secondo l'ordine delle foto presenti, con codici
+  potenzialmente diversi (cambiano URL, pagine e nomi dei file). Backup
+  insieme al CSV.
+- Le correzioni a mano sono previste e sicure: si modifica una riga con un
+  editor, si rilancia `make anagrafica`.
 
     make build    # una sola volta: i thumb delle foto sono attesi
                   # prima del rendering, il sito esce completo

@@ -17,7 +17,7 @@ subtitle: Angoli di sq. ##NAMESQ##
                 </p>
                 <ul>
                     {{#each squadriglie.##NAMESQ##.members}}
-                    <li><a href="{{@key}}.html">{{this.nome}} {{this.cognome}}</a></li>
+                    {{#if this.nome}}<li><a href="{{@key}}.html">{{this.nome}} {{this.cognome}}</a></li>{{else}}{{#if this.hafoto}}<li><img alt="Foto segnaletica sq. ##NAMESQ##" src="{{rootPath}}angolisq/reparto/{{this.fotosegn}}" border="1"></img></li>{{/if}}{{/if}}
                     {{/each}}
                 </ul>
                 <p>

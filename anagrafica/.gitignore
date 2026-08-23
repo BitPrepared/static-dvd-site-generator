@@ -4,3 +4,7 @@
 *.ods
 # eccezione: elenco di esempio con soli dati finti (mai dati veri, vedi §5)
 !elenco_ragazzi_example.csv
+# eccezione: registro dei codici di esempio con soli dati finti (change
+# foto-segnaletiche-codificate): il registro vero lo genera l'import e resta
+# gitignored come il CSV dell'elenco
+!registro_segnaletiche_example.csv

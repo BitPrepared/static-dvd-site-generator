@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 'use strict';
 
-// Genera dati/squadriglie.json a partire dall'elenco ragazzi in CSV
-// (export con separatore ';' e prima riga di intestazione, come il vecchio
-// anagrafica_da_csv.php che questo script sostituisce).
+// Genera dati/squadriglie.json incrociando l'elenco ragazzi in CSV (export
+// con separatore ';' e prima riga di intestazione) con il registro dei
+// codici delle foto segnaletiche scritto dall'import
+// (anagrafica/registro_segnaletiche.csv, change foto-segnaletiche-codificate):
+// se il ragazzo è nel registro la chiave del member è il suo codice
+// (es. mr1_blu), altrimenti l'id da nome+cognome come prima.
 //
-// Uso:     node anagrafica/genera_anagrafica.js [--input <csv>] [--output <json>]
-// Anonimo: ANONIMO=1 -> solo i nomi delle squadriglie, members vuoti
-//          (nessun dato ragazzo nel json: sito condivisibile senza anagrafica).
+// Uso:     node anagrafica/genera_anagrafica.js [--input <csv>] [--output <json>] [--registro <csv>]
+// Anonimo: ANONIMO=1 -> solo nomi squadriglie; col registro anche i soli
+//          codici dei ragazzi con foto ({codice:{}}), per la griglia della
+//          pagina squadriglia (nessun dato anagrafico nel json).
+// Valvola: senza file di registro (import mai lanciato) le chiavi restano
+//          nomecognome, identiche alla pipeline precedente.
 //
 // Lo script gira nell'immagine del generatore (make anagrafica) ed è montato
 // come volume: si può modificare a mano senza rifare make init.
@@ -18,6 +24,10 @@ const { parse } = require('csv-parse/sync');
 const { transliterate } = require('transliteration');
 
 const CSV_DEFAULT = 'anagrafica/elenco_ragazzi.csv';
+// Registro dei codici delle foto segnaletiche (change
+// foto-segnaletiche-codificate): scritto dall'import, qui solo letto. Se
+// manca la valvola di sicurezza mantiene le chiavi legacy nomecognome.
+const REGISTRO_DEFAULT = 'anagrafica/registro_segnaletiche.csv';
 const OUTPUT_DEFAULT = 'dati/squadriglie.json';
 const SEPARATORE = ';';
 const COLONNE_OBBLIGATORIE = ['squadriglia', 'nome', 'cognome'];
@@ -35,25 +45,31 @@ function erroreExit(righe) {
 
 function aiuto() {
   const uso = [
-    'Uso: node anagrafica/genera_anagrafica.js [--input <csv>] [--output <json>]',
+    'Uso: node anagrafica/genera_anagrafica.js [--input <csv>] [--output <json>] [--registro <csv>]',
     '',
-    'Legge l\'elenco ragazzi (separatore \';\', prima riga di intestazione) e',
-    'scrive il json delle squadriglie per il generatore del sito.',
-    "Con ANONIMO=1 nel json finiscono solo i nomi delle squadriglie (members vuoti).",
+    'Legge l\'elenco ragazzi (separatore \';\', prima riga di intestazione), lo',
+    'incrocia col registro dei codici delle foto segnaletiche e scrive il json',
+    'delle squadriglie per il generatore del sito.',
+    'Senza registro le chiavi restano nome+cognome come nella pipeline precedente.',
+    "Con ANONIMO=1 il json non contiene dati anagrafici: solo squadriglie e,",
+    'se c\'è il registro, i codici dei ragazzi con foto importata.',
     '',
-    `  --input    CSV in ingresso (default: ${CSV_DEFAULT})`,
-    `  --output   json in uscita (default: ${OUTPUT_DEFAULT})`
+    `  --input     CSV in ingresso (default: ${CSV_DEFAULT})`,
+    `  --output    json in uscita (default: ${OUTPUT_DEFAULT})`,
+    `  --registro  codici segnaletiche scritti dall'import (default: ${REGISTRO_DEFAULT})`
   ];
   console.log(uso.join('\n'));
 }
 
 function parseArgomenti(argv) {
-  const opzioni = { input: CSV_DEFAULT, output: OUTPUT_DEFAULT };
+  const opzioni = { input: CSV_DEFAULT, output: OUTPUT_DEFAULT, registro: REGISTRO_DEFAULT };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--input' && argv[i + 1]) {
       opzioni.input = argv[++i];
     } else if (argv[i] === '--output' && argv[i + 1]) {
       opzioni.output = argv[++i];
+    } else if (argv[i] === '--registro' && argv[i + 1]) {
+      opzioni.registro = argv[++i];
     } else if (argv[i] === '--help' || argv[i] === '-h') {
       opzioni.aiuto = true;
     } else {
@@ -136,6 +152,35 @@ function leggiInput(percorsoCsv) {
   return csv;
 }
 
+// Registro dei codici scritto dall'import delle foto segnaletiche: righe
+// nome;cognome;squadriglia;codice con intestazione, solo appensione. Qui è
+// in sola lettura.
+function parseRegistroContenuto(contenuto) {
+  const records = parse(contenuto, {
+    delimiter: SEPARATORE,
+    bom: true,
+    skip_empty_lines: true,
+    from_line: 2 // la prima riga è l'intestazione scritta dall'import
+  });
+  return records
+    .map((campi) => ({
+      nome: String(campi[0] == null ? '' : campi[0]).trim(),
+      cognome: String(campi[1] == null ? '' : campi[1]).trim(),
+      squadriglia: String(campi[2] == null ? '' : campi[2]).trim(),
+      codice: String(campi[3] == null ? '' : campi[3]).trim()
+    }))
+    .filter((r) => r.nome !== '' || r.cognome !== '' || r.codice !== '');
+}
+
+// Restituisce null se il file non esiste: è la valvola di sicurezza (import
+// mai lanciato -> comportamento precedente invariato).
+function leggiRegistro(percorso) {
+  if (!fs.existsSync(percorso)) {
+    return null;
+  }
+  return parseRegistroContenuto(fs.readFileSync(percorso, 'utf8'));
+}
+
 // Scrittura atomica: prima tutto su un .tmp, poi il rename. Un'eventuale
 // interruzione non lascia un squadriglie.json a metà (il generatore legge
 // quel file all'avvio di ogni build).
@@ -153,11 +198,32 @@ function main() {
     return;
   }
   const csv = leggiInput(opzioni.input);
+  const registro = leggiRegistro(opzioni.registro || REGISTRO_DEFAULT);
   const anonimo = process.env.ANONIMO === '1';
 
   console.error(`anagrafica: letti ${csv.righe.length} ragazzi da ${opzioni.input}${anonimo ? ' (modalità anonima)' : ''}`);
+  if (registro === null) {
+    // valvola di sicurezza: senza import le chiavi restano nomecognome
+    console.error(`anagrafica: registro segnaletiche non trovato (${opzioni.registro || REGISTRO_DEFAULT}): chiavi legacy nomecognome`);
+  } else {
+    console.error(`anagrafica: lette ${registro.length} righe di codici da ${opzioni.registro || REGISTRO_DEFAULT}`);
+  }
 
-  const squadriglie = generaSquadriglie(csv.righe, { anonimo });
+  const squadriglie = generaSquadriglie(csv.righe, { anonimo, registro });
+
+  // Righe di registro senza corrispondenza nel CSV: tipico ragazzo spostato
+  // di squadriglia direttamente nel CSV, o riga da correggere a mano nel
+  // registro (vedi Readme §3). Non fatale: il codice resta però senza member.
+  if (registro !== null) {
+    const chiaviCsv = new Set(
+      csv.righe.map((r) => chiaveIdentita(r.nome, r.cognome, r.squadriglia))
+    );
+    for (const r of registro) {
+      if (!chiaviCsv.has(chiaveIdentita(r.nome, r.cognome, r.squadriglia))) {
+        console.error(`anagrafica: warning: il codice '${r.codice}' (${r.nome} ${r.cognome}, sq. ${r.squadriglia}) non trova nessun ragazzo nel CSV: correggi la riga nel registro o l'export`);
+      }
+    }
+  }
 
   if (Object.keys(squadriglie).length === 0) {
     console.error('anagrafica: warning: nessun ragazzo nel CSV, squadriglie vuote');
@@ -205,13 +271,38 @@ function idRagazzo(nome, cognome) {
     .replace(/\s+/g, '');
 }
 
+// Campo d'identità in forma ASCII minuscola senza spazi né apostrofi:
+// stesso criterio dell'idRagazzo e della normalizzazione dell'import bash,
+// così "Dell'Orto" nel CSV matcha "dellorto" nel filename del registro.
+function asciiCampo(testo) {
+  return transliterate(String(testo == null ? '' : testo).trim(), { trim: false })
+    .toLowerCase()
+    .replace(/['’]/g, '')
+    .replace(/\s+/g, '');
+}
+
+// Chiave di incrocio CSV <-> registro per nome+cognome+squadriglia.
+function chiaveIdentita(nome, cognome, squadriglia) {
+  return `${asciiCampo(nome)}|${asciiCampo(cognome)}|${asciiCampo(squadriglia)}`;
+}
+
 // Costruisce le squadriglie dalle righe del CSV.
-// - reale: una squadriglia per ogni ragazzo, members con tutti i campi;
-// - anonima: solo i nomi delle squadriglie, members vuoti.
+// - reale: members con tutti i campi, chiavi per codice dell'import se il
+//   ragazzo è nel registro, altrimenti id legacy nomecognome;
+// - anonima: i soli codici dei ragazzi con foto importata ({codice: {}}),
+//   members vuoti senza registro.
 // L'ordine è quello di prima apparizione nel CSV (oggi dava l'elenco
 // hardcoded "per anzianità" del vecchio PHP).
 function generaSquadriglie(righe, opzioni) {
   const anonimo = !!(opzioni && opzioni.anonimo);
+  const registro = Array.isArray(opzioni && opzioni.registro) ? opzioni.registro : null;
+  // ponte sulle identità: chiave normalizzata -> codice assegnato all'import
+  const mappaCodici = new Map();
+  if (registro !== null) {
+    for (const r of registro) {
+      mappaCodici.set(chiaveIdentita(r.nome, r.cognome, r.squadriglia), r.codice);
+    }
+  }
   const squadriglie = {};
   for (const riga of righe) {
     const valori = Object.values(riga).map((v) => String(v == null ? '' : v).trim());
@@ -222,8 +313,16 @@ function generaSquadriglie(righe, opzioni) {
     if (!Object.prototype.hasOwnProperty.call(squadriglie, squadriglia)) {
       squadriglie[squadriglia] = { name: squadriglia, members: {} };
     }
+    const codice = registro === null
+      ? undefined
+      : mappaCodici.get(chiaveIdentita(
+        String(riga.nome || ''), String(riga.cognome || ''), riga.squadriglia));
     if (anonimo) {
-      continue; // modalità anonima: nessun dato ragazzo nel json
+      // solo chi ha una foto importata compare in griglia, come puro codice
+      if (codice) {
+        squadriglie[squadriglia].members[codice] = {};
+      }
+      continue;
     }
     const ragazzo = {};
     for (const [chiave, valore] of Object.entries(riga)) {
@@ -231,7 +330,11 @@ function generaSquadriglie(righe, opzioni) {
     }
     ragazzo.nome = maiuscolizza(ragazzo.nome);
     ragazzo.cognome = maiuscolizza(ragazzo.cognome);
-    squadriglie[squadriglia].members[idRagazzo(ragazzo.nome, ragazzo.cognome)] = ragazzo;
+    // chiave del member: il codice dell'import se c'è la foto, altrimenti
+    // l'id da nome+cognome come sempre (valvola: registro assente o ragazzo
+    // senza foto segnaletica)
+    const id = codice || idRagazzo(ragazzo.nome, ragazzo.cognome);
+    squadriglie[squadriglia].members[id] = ragazzo;
   }
   return squadriglie;
 }
@@ -239,7 +342,10 @@ function generaSquadriglie(righe, opzioni) {
 module.exports = {
   normalizzaChiave,
   leggiCsv,
+  parseRegistroContenuto,
+  leggiRegistro,
   validaIntestazione,
+  chiaveIdentita,
   maiuscolizza,
   idRagazzo,
   generaSquadriglie

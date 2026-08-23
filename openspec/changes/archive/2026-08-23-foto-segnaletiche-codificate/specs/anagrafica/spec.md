@@ -1,13 +1,4 @@
-# anagrafica Specification
-
-## Purpose
-
-Generazione di `dati/squadriglie.json` a partire dal CSV dell'anagrafica
-(`anagrafica/elenco_ragazzi.csv`): stessa pipeline in Node, incrociata col
-registro dei codici delle foto segnaletiche, con una modalità anonima che
-produce un json senza alcun dato dei ragazzi.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Generazione del json squadriglie da CSV
 
@@ -48,7 +39,7 @@ runtime Node dell'immagine del generatore, senza container PHP.
 - **THEN** la generazione riesce e l'output e' confrontabile con
   `dati/squadriglie.example.json`
 
-### Requirement: Modalità anonima
+### Requirement: Modalita' anonima
 
 Con `ANONIMO=1` (`make anagrafica ANONIMO=1`) il json generato SHALL
 contenere per ogni squadriglia `name` e i soli codici dei ragazzi che hanno
@@ -77,16 +68,6 @@ pipeline precedente.
 - **THEN** i members sono vuoti e il sito coincide con quello anonimo della
   pipeline precedente
 
-### Requirement: Squadriglie ricavate dal CSV
-
-L'elenco delle squadriglie SHALL essere derivato dai valori distinti della
-colonna `squadriglia` del CSV (nell'ordine di prima apparizione), non da un
-elenco fisso nello script.
-
-#### Scenario: squadriglia con nome nuovo
-- **WHEN** il CSV contiene una squadriglia mai vista (es. `falchi`)
-- **THEN** il json include `falchi` senza alcuna modifica al codice
-
 ### Requirement: Identificativo ragazzo calcolato una volta
 
 L'identificativo di ogni ragazzo (chiave del member nel json e nome file
@@ -107,32 +88,3 @@ cognome come nella pipeline precedente.
 - **WHEN** l'export CSV viene riesportato con ordine o righe diverse e si
   rilancia `make anagrafica`
 - **THEN** i codici gia' assegnati (e quindi URL e foto) restano identici
-
-### Requirement: Diagnostica errori di input
-
-Se il CSV manca, non è leggibile o non contiene le colonne attese, la
-generazione SHALL terminare con exit code diverso da zero e un messaggio
-d'errore azionabile su stderr (nello stile della diagnostica di avvio del
-generatore), senza scrivere un `squadriglie.json` parziale.
-
-#### Scenario: CSV assente
-- **WHEN** si lancia `make anagrafica` senza `anagrafica/elenco_ragazzi.csv`
-- **THEN** il comando esce con errore e un messaggio che indica il file
-  atteso e dove mettere l'elenco dei ragazzi
-
-#### Scenario: colonna obbligatoria mancante
-- **WHEN** il CSV non ha la colonna `squadriglia` (o `nome`/`cognome`)
-- **THEN** il comando esce con errore indicando la colonna mancante, senza
-  scrivere il json
-
-### Requirement: Dati di esempio tracciati
-
-Il repository SHALL includere dati di esempio finti per la generazione:
-`anagrafica/elenco_ragazzi_example.csv` (oggi gitignorato da `*.csv`) e un
-json di riferimento della modalità anonima, mantenuti nel gitignore come
-eccezioni esplicite. Nessun dato reale di ragazzi MUST mai essere tracciato.
-
-#### Scenario: clone pulito e smoke test
-- **WHEN** si clona il repo e si copia l'example come CSV di lavoro
-- **THEN** `make anagrafica` e `make anagrafica ANONIMO=1` funzionano senza
-  alcun dato reale

@@ -19,7 +19,16 @@ ANONIMO ?= 0
 
 # esistono cartelle con nomi di comando, quindi automaticamente viene skippato il comando pensando
 # sia stata fatta gia la compilazione, cosi le si ignora.
-.PHONY: build clean anagrafica font footer golden-salva golden-confronta check-executor foto foto-watch
+.PHONY: help build clean anagrafica font footer golden-salva golden-confronta check-executor foto foto-watch segnaletiche
+
+# aiuto: elenco dei comandi disponibili, estratto dai commenti ## accanto a
+# ogni target (primo target del file: anche un "make" nudo mostra l'aiuto)
+help:
+	@echo "DVD del Campo — comandi disponibili:"
+	@grep -E '^[a-zA-Z][a-zA-Z0-9_-]*:.*## ' $(MAKEFILE_LIST) | awk -F' ## ' '{ sub(/:.*/, "", $$1); printf "  make %-17s %s\n", $$1, $$2 }'
+	@echo ""
+	@echo "Variabili utili: EXECUTOR=docker|podman  ANONIMO=1  DEBUG=True  FOTO_SRC=...  SEGNALETICHE_SRC=..."
+	@echo "Dettagli e flussi completi: Readme.md"
 
 # primo controllo di ogni target che usa il container: runtime presente?
 check-executor:
@@ -32,13 +41,13 @@ check-executor:
 # messaggio. Lo step footer e' fail-soft (change footer-dinamico-da-svg):
 # se fallisce subentra la riserva committita', se fallisce la pipeline la
 # build fallisce come sempre
-build: check-executor
+build: check-executor ## genera il sito completo in build/ (footer + pipeline)
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" -e DEBUG=$(DEBUG) -t $(IMAGE_NAME):$(VERSION) bash -c '{ node scripts/genera_footer.js || { echo "WARNING: generazione footer fallita, uso la riserva scripts/footer_fallback.png" >&2; mkdir -p build/img; cp scripts/footer_fallback.png build/img/footer.png; } } && npm run build'
 
-bash: check-executor
+bash: check-executor ## shell interattiva nel container del generatore
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint /bin/bash -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -t $(IMAGE_NAME):$(VERSION)
 
-init: check-executor
+init: check-executor ## costruisce l'immagine container col tuo uid/gid (serve solo se cambiano le dipendenze npm)
 	${EXECUTOR} build --build-arg USER_ID=$(shell id -u) --build-arg GROUP_ID=$(shell id -g) -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .
 	@# download del font del footer (change footer-dinamico-da-svg): fail-soft,
 	@# per il resto del sito non serve; retry dedicato con: make font
@@ -53,7 +62,7 @@ init: check-executor
 DAFONT_STAR_JEDI=https://dl.dafont.com/dl/?f=star_jedi
 ZIP ?=
 
-font: check-executor
+font: check-executor ## scarica i TTF Star Jedi per il footer (ZIP=... se dafont blocca)
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint /bin/bash \
 	  -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" \
 	  $(if $(ZIP),-v "$(ZIP):/tmp/star_jedi.zip:ro",) \
@@ -69,7 +78,7 @@ font: check-executor
 #   make footer DATE="22-26/08/2023"
 DATE ?=
 
-footer: check-executor
+footer: check-executor ## rigenera build/img/footer.png dal template SVG (DATE=... per le prove)
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node \
 	  -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" \
 	  -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" \
@@ -86,14 +95,14 @@ footer: check-executor
 #   make golden-confronta  dopo ogni passo di update
 GOLDEN_MANIFEST=golden/manifest.json
 
-golden-salva: check-executor
+golden-salva: check-executor ## salva lo snapshot golden dell'output corrente
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node \
 	  -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" \
 	  -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" \
 	  -v "${PWD}/golden:/usr/src/app/golden$(MOUNT_OPTION)" \
 	  -w /usr/src/app -t $(IMAGE_NAME):$(VERSION) scripts/golden.js salva build $(GOLDEN_MANIFEST)
 
-golden-confronta: check-executor
+golden-confronta: check-executor ## confronta l'output con lo snapshot golden (exit 0 = identico)
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node \
 	  -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" \
 	  -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" \
@@ -105,19 +114,19 @@ golden-confronta: check-executor
 # dipendenze npm in static-dvd-site-generator/package.json).
 ANAGRAFICA_SCRIPT=anagrafica/genera_anagrafica.js
 
-anagrafica: check-executor
+anagrafica: check-executor ## genera dati/squadriglie.json dal CSV (+ ANONIMO=1 per la versione anonima)
 	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint node -v "${PWD}/anagrafica:/usr/src/app/anagrafica$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -w /usr/src/app -e ANONIMO=$(ANONIMO) -t $(IMAGE_NAME):$(VERSION) $(ANAGRAFICA_SCRIPT)
 
-clean-docker: check-executor
+clean-docker: check-executor ## rimuove immagine e cache buildx del runtime container
 	${EXECUTOR} buildx prune
 	${EXECUTOR} rmi $(IMAGE_NAME)
 	${EXECUTOR} rmi $(IMAGE_NAME):$(VERSION)
 
-clean:
+clean: ## svuota la cartella build/
 	rm -rf build
 	mkdir build
 
-open:
+open: ## apre build/index.html nel browser (qutebrowser)
 	qutebrowser file://${PWD}/build/index.html
 
 # foto: importa le foto dello staff dalla share (Readme.md §3): rotazione/
@@ -130,11 +139,22 @@ open:
 FOTO_SRC ?= $(HOME)/share_disks/staff/foto
 WATCH_INTERVAL ?= 300
 
-foto:
+foto: ## importa le foto del diario dalla share staff (incrementale, host)
 	@env $(if $(RUOTA_SCRIPT),RUOTA_SCRIPT="$(RUOTA_SCRIPT)") $(if $(FOTO_ESTENSIONI),FOTO_ESTENSIONI="$(FOTO_ESTENSIONI)") bash scripts/importa_foto.sh "$(FOTO_SRC)"
 
-foto-watch:  # import continuo mentre le foto arrivano; Ctrl-C per fermare
+foto-watch: ## import continuo delle foto mentre arrivano (Ctrl-C per fermare)
 	@env $(if $(RUOTA_SCRIPT),RUOTA_SCRIPT="$(RUOTA_SCRIPT)") $(if $(FOTO_ESTENSIONI),FOTO_ESTENSIONI="$(FOTO_ESTENSIONI)") WATCH_INTERVAL="$(WATCH_INTERVAL)" bash scripts/importa_foto.sh --watch "$(FOTO_SRC)"
+
+# segnaletiche: importa e codifica le foto segnaletiche dalla share dello
+# staff (change foto-segnaletiche-codificate, Readme.md §3): filename
+# obbligatorio nome_cognome_squadriglia.<ext>, codici stabili registrati in
+# anagrafica/registro_segnaletiche.csv (gitignored), copia rinominata in
+# dvd/angolisq/materiale/reparto/<codice>.<ext>. Incrementale e non
+# distruttivo; gira sull'host, NON usa il container (come make foto).
+SEGNALETICHE_SRC ?= $(HOME)/share_disks/staff/segnaletiche
+
+segnaletiche: ## importa e codifica le foto segnaletiche dalla share staff (incrementale, host)
+	@env $(if $(SEGNALETICHE_ESTENSIONI),SEGNALETICHE_ESTENSIONI="$(SEGNALETICHE_ESTENSIONI)") bash scripts/importa_segnaletiche.sh "$(SEGNALETICHE_SRC)"
 
 
 # 

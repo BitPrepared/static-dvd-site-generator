@@ -199,8 +199,12 @@ async function main() {
   /**
    * Copia ricorsivamente i file da src a dest.
    * Se `lowercase` è true, i nomi di file e cartelle saranno trasformati in minuscolo.
+   * Con `filtro` (change foto-segnaletiche-codificate) si copiano solo i file
+   * che la funzione approva: riceve il percorso relativo (con slash, dalla
+   * radice della copia, es. "reparto/foto.jpg") e decide se entra nel sito;
+   * le cartelle non vengono filtrate.
    */
-  function prepareResources(logger, config, title, src, dest, lowercase = false) {
+  function prepareResources(logger, config, title, src, dest, lowercase = false, filtro, prefisso = '') {
     logger.info('PrepareResources', title);
     try {
       fs.ensureDirSync(dest);
@@ -210,6 +214,7 @@ async function main() {
       for (const item of items) {
         const originalName = item.name;
         const normalized = originalName.normalize('NFD'); // decomposizione
+        const relativo = prefisso ? `${prefisso}/${originalName}` : originalName;
 
         // Se è nella lista di esclusione, salta
         if (config.excludeFileToSync.includes(originalName)) continue;
@@ -224,8 +229,12 @@ async function main() {
         }
 
         if (item.isDirectory()) {
-          prepareResources(logger, config, title, srcPath, destPath, lowercase); // ricorsivo
+          prepareResources(logger, config, title, srcPath, destPath, lowercase, filtro, relativo); // ricorsivo
         } else {
+          if (filtro && !filtro(relativo)) {
+            logger.warn('file non pubblicato (non riconosciuto tra i dati del sito): ' + relativo);
+            continue;
+          }
           fs.ensureDirSync(path.dirname(destPath));
           fs.copyFileSync(srcPath, destPath);
           if ( config.debug_enable ){
@@ -254,7 +263,13 @@ async function main() {
   prepareResources(logger, config, 'copy angoli src', angolisq.src(), path.join(config.src, 'angolisq'), true);
 
   // FIXME: non copia la thumb della foto di gruppo
-  prepareResources(logger, config, 'copy angoli materiale', angolisq.srcAssets(), path.join(config.output, 'angolisq'), true);
+  // pubblicità selettiva (change foto-segnaletiche-codificate): in
+  // reparto/ entrano nel sito solo le foto (e i thumb) dei codici noti al
+  // json; i file estranei restano fuori, già segnalati dalla build angolisq
+  const pubblicabiliReparto = angolisq.filePubblicabiliReparto();
+  prepareResources(logger, config, 'copy angoli materiale', angolisq.srcAssets(),
+    path.join(config.output, 'angolisq'), true,
+    (relativo) => !relativo.startsWith('reparto/') || pubblicabiliReparto.has(relativo.slice('reparto/'.length)));
 
   prepareResources(logger, config, 'copy programmi src', programmi.src(), path.join(config.src, 'programmi'));
 
