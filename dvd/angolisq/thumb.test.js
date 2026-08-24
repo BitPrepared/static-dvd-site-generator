@@ -39,8 +39,12 @@ function installaStubGm(opzioni) {
   const originale = require('gm');
   const percorsoGm = require.resolve('gm');
   function fintoGm(buffer) {
-    return {
-      resize() { return this; },
+    const istanza = {
+      // registra le geometrie richieste: serve ai test sul fotogruppo
+      resize(...args) {
+        if (opzioni && opzioni.resizeChiamate) opzioni.resizeChiamate.push(args);
+        return istanza;
+      },
       write(destinazione, cb) {
         setImmediate(() => {
           if (opzioni && opzioni.erroreSu && destinazione.match(opzioni.erroreSu)) {
@@ -52,6 +56,7 @@ function installaStubGm(opzioni) {
         });
       }
     };
+    return istanza;
   }
   fintoGm.subClass = () => fintoGm;
   require.cache[percorsoGm].exports = fintoGm;
@@ -125,6 +130,38 @@ test('thumb già presenti non vengono rigenerati', async () => {
       esistente,
       'il thumb esistente non va sovrascritto'
     );
+  } finally {
+    if (ripristina) ripristina();
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('fotogruppo: thumb larga 650 rigenerata, non quella piccola del batch', async () => {
+  const resizeChiamate = [];
+  const ripristina = gmDisponibile ? null : installaStubGm({ resizeChiamate });
+  const vecchia = Buffer.from('thumb vecchia del fotogruppo, da sostituire');
+  const tmp = copiaIsolata({
+    'materiale/reparto/fotogruppo.jpg': JPEG_1X1,
+    // simula il disco con una thumb rimasta da una build precedente
+    'materiale/reparto/thumb_fotogruppo.jpg': vecchia,
+    'materiale/reparto/mr1_blu.jpg': JPEG_1X1
+  });
+  try {
+    const Angolisq = require(path.join(tmp, 'index.js'));
+    await new Angolisq(loggerMuto(),
+      { blu: { name: 'blu', members: { mr1_blu: { ini: 'M. R.' } } } }, []).build();
+
+    const thumb = fs.readFileSync(path.join(tmp, 'materiale/reparto/thumb_fotogruppo.jpg'));
+    assert.notDeepEqual(thumb, vecchia,
+      'la thumb del fotogruppo va rigenerata anche se esiste gia\'');
+    assert.ok(fs.existsSync(path.join(tmp, 'materiale/reparto/thumb_mr1_blu.jpg')),
+      'il batch da 150 continua a occuparsi dei codici ragazzi');
+    if (!gmDisponibile) {
+      // con lo stub possiamo vedere la geometria richiesta
+      const larga = resizeChiamate.find((args) => args[0] === 650);
+      assert.ok(larga, 'il fotogruppo deve passare da resize(650)');
+      assert.equal(larga.length, 1, 'resize a sola larghezza: altezza in proporzione');
+    }
   } finally {
     if (ripristina) ripristina();
     fs.rmSync(tmp, { recursive: true, force: true });

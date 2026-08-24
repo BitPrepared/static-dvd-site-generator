@@ -10,8 +10,9 @@
 //
 // Uso:     node anagrafica/genera_anagrafica.js [--input <csv>] [--output <json>] [--registro <csv>]
 // Anonimo: ANONIMO=1 -> solo nomi squadriglie; col registro anche i soli
-//          codici dei ragazzi con foto ({codice:{}}), per la griglia della
-//          pagina squadriglia (nessun dato anagrafico nel json).
+//          codici dei ragazzi con foto ({codice:{ini:"M. R."}}, iniziali
+//          puntate per la griglia della pagina squadriglia — nessun altro
+//          dato anagrafico nel json).
 // Valvola: senza file di registro (import mai lanciato) le chiavi restano
 //          nomecognome, identiche alla pipeline precedente.
 //
@@ -52,7 +53,8 @@ function aiuto() {
     'delle squadriglie per il generatore del sito.',
     'Senza registro le chiavi restano nome+cognome come nella pipeline precedente.',
     "Con ANONIMO=1 il json non contiene dati anagrafici: solo squadriglie e,",
-    'se c\'è il registro, i codici dei ragazzi con foto importata.',
+    'se c\'è il registro, i codici dei ragazzi con foto importata con le',
+    'iniziali puntate (ini: "M. R.").',
     '',
     `  --input     CSV in ingresso (default: ${CSV_DEFAULT})`,
     `  --output    json in uscita (default: ${OUTPUT_DEFAULT})`,
@@ -286,10 +288,25 @@ function chiaveIdentita(nome, cognome, squadriglia) {
   return `${asciiCampo(nome)}|${asciiCampo(cognome)}|${asciiCampo(squadriglia)}`;
 }
 
+// Iniziali puntate per la griglia anonima ("M. R." da mario rossi): prima
+// lettera maiuscola del nome e della prima parola del cognome, ognuna col
+// punto. Campi mancanti -> stringa vuota senza errori: una voce senza
+// dicitura e' meglio di una build fallita la sera del campo. E' l'UNICO
+// frammento d'identita' che entra nel json anonimo (mai il nome completo).
+function inizialiPuntate(nome, cognome) {
+  const iniziale = (s) => {
+    const c = String(s == null ? '' : s).trim().charAt(0);
+    return c ? `${c.toUpperCase()}.` : '';
+  };
+  const primoCognome = String(cognome == null ? '' : cognome).trim().split(/\s+/)[0];
+  return [iniziale(nome), iniziale(primoCognome)].filter(Boolean).join(' ');
+}
+
 // Costruisce le squadriglie dalle righe del CSV.
 // - reale: members con tutti i campi, chiavi per codice dell'import se il
 //   ragazzo è nel registro, altrimenti id legacy nomecognome;
-// - anonima: i soli codici dei ragazzi con foto importata ({codice: {}}),
+// - anonima: i soli codici dei ragazzi con foto importata
+//   ({codice: {ini: "M. R."}}, change iniziali-squadriglieri-anonimi),
 //   members vuoti senza registro.
 // L'ordine è quello di prima apparizione nel CSV (oggi dava l'elenco
 // hardcoded "per anzianità" del vecchio PHP).
@@ -318,9 +335,10 @@ function generaSquadriglie(righe, opzioni) {
       : mappaCodici.get(chiaveIdentita(
         String(riga.nome || ''), String(riga.cognome || ''), riga.squadriglia));
     if (anonimo) {
-      // solo chi ha una foto importata compare in griglia, come puro codice
+      // solo chi ha una foto importata compare in griglia: codice + iniziali
+      // puntate (nessun altro dato anagrafico)
       if (codice) {
-        squadriglie[squadriglia].members[codice] = {};
+        squadriglie[squadriglia].members[codice] = { ini: inizialiPuntate(riga.nome, riga.cognome) };
       }
       continue;
     }

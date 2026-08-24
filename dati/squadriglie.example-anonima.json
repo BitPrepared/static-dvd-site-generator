@@ -1,1 +1,1 @@
-{"oro":{"name":"oro","members":{"pz1_oro":{},"gp1_oro":{}}},"blu":{"name":"blu","members":{"cd1_blu":{}}}}
+{"oro":{"name":"oro","members":{"pz1_oro":{"ini":"P. Z."},"gp1_oro":{"ini":"G. P."}}},"blu":{"name":"blu","members":{"cd1_blu":{"ini":"C. D."}}}}

@@ -3,7 +3,8 @@
 # codificate, Readme.md §3): copre gli scenari della spec foto-segnaletiche —
 # formato obbligatorio del filename, codifica stabile e registro in sola
 # appensione, copia rinominata incrementale e non distruttiva, incrocio con
-# l'anagrafica CSV, comando e diagnostica.
+# l'anagrafica CSV, generazione automatica dell'elenco quando assente,
+# comando e diagnostica.
 #
 # Uso: scripts/test_importa_segnaletiche.sh   (oppure bash scripts/test_...)
 set -u
@@ -185,6 +186,54 @@ out=$(SEGNALETICHE_DST="$LAV3/reparto" REGISTRO_SEGNALETICHE="$LAV3/registro.csv
 [ $rc -eq 0 ] && grep -qi "elenco" <<<"$out" && [ -f "$LAV3/reparto/mr1_blu.jpg" ] \
   && ok "incrocio: elenco assente -> avviso, import prosegue" \
   || no "incrocio: elenco assente (rc=$rc): $out"
+
+echo "== generazione automatica dell'elenco dal registro =="
+# elenco assente: a fine passata nasce dal registro, con avviso unico e zero
+# warning per-foto (senza elenco non c'e' confronto che possa fallire)
+SRC="$TMP/src_gen"; LAV="$TMP/lav_gen"; crea_share "$SRC"
+EL="$LAV/anagrafica/elenco_ragazzi.csv"
+out=$(SEGNALETICHE_DST="$LAV/reparto" REGISTRO_SEGNALETICHE="$LAV/anagrafica/registro.csv" \
+      ELENCO_RAGAZZI="$EL" bash "$SCRIPT" "$SRC" 2>&1); rc=$?
+[ $rc -eq 0 ] && [ -f "$EL" ] && grep -qi "generato" <<<"$out" \
+  && ok "elenco assente: generato dal registro a fine passata" \
+  || no "elenco assente: attesa la generazione (rc=$rc): $out"
+[ "$(head -n1 "$EL")" = "nome;cognome;squadriglia" ] \
+  && ok "elenco generato: intestazione nome;cognome;squadriglia" \
+  || no "elenco generato: intestazione sbagliata ($(head -n1 "$EL"))"
+diff <(tail -n +2 "$LAV/anagrafica/registro.csv" | cut -d';' -f1-3) <(tail -n +2 "$EL") >/dev/null \
+  && ok "elenco generato: una riga per identita', stesso ordine del registro" \
+  || no "elenco generato: righe diverse dal registro"
+grep -q "nessuna corrispondenza nell'elenco" <<<"$out" \
+  && no "senza elenco: nessun warning per-foto atteso: $out" \
+  || ok "senza elenco: zero warning per-foto (solo l'avviso unico)"
+# passata successiva: l'elenco generato fa matchare l'incrocio, silenzio totale
+out=$(lancia "$SRC" "$LAV" "$EL"); rc=$?
+[ $rc -eq 0 ] && ! grep -qi "warning" <<<"$out" \
+  && ok "passata successiva: incrocio matcha sull'elenco generato, zero warning" \
+  || no "passata successiva (rc=$rc): $out"
+# elenco fornito o corretto a mano: mai toccato, nemmeno di un byte
+printf 'nome;cognome;squadriglia\nPippo;Paperino;ORO\n' > "$TMP/elenco_a_mano.csv"
+cp "$TMP/elenco_a_mano.csv" "$TMP/elenco_prima"
+lancia "$SRC" "$LAV" "$TMP/elenco_a_mano.csv" >/dev/null
+cmp -s "$TMP/elenco_a_mano.csv" "$TMP/elenco_prima" \
+  && ok "elenco fornito a mano: resta byte per byte invariato" \
+  || no "elenco fornito a mano: e' stato modificato"
+# nessuna identita' nel registro (share tutta rifiutata): nessun elenco vuoto
+SRC="$TMP/src_ko2"; LAV="$TMP/lav_ko2"; mkdir -p "$SRC"
+printf 'img macchina' > "$SRC/IMG_9999.jpg"
+out=$(SEGNALETICHE_DST="$LAV/reparto" REGISTRO_SEGNALETICHE="$LAV/anagrafica/registro.csv" \
+      ELENCO_RAGAZZI="$LAV/anagrafica/elenco_ragazzi.csv" bash "$SCRIPT" "$SRC" 2>&1); rc=$?
+[ $rc -ne 0 ] && [ ! -f "$LAV/anagrafica/elenco_ragazzi.csv" ] && grep -qi "registro vuoto" <<<"$out" \
+  && ok "registro vuoto: nessun elenco creato, niente crash" \
+  || no "registro vuoto: atteso niente elenco (rc=$rc): $out"
+# elenco non scrivibile (la "cartella" e' un file piatto): errore rumoroso
+SRC="$TMP/src_fail"; LAV="$TMP/lav_fail"; crea_share "$SRC"
+mkdir -p "$LAV" && touch "$LAV/blocco"
+out=$(SEGNALETICHE_DST="$LAV/reparto" REGISTRO_SEGNALETICHE="$LAV/registro.csv" \
+      ELENCO_RAGAZZI="$LAV/blocco/elenco_ragazzi.csv" bash "$SCRIPT" "$SRC" 2>&1); rc=$?
+[ $rc -ne 0 ] && grep -qi "creabile" <<<"$out" \
+  && ok "elenco non scrivibile: exit != 0 con messaggio azionabile" \
+  || no "fallimento scrittura elenco (rc=$rc): $out"
 
 echo "== comando e diagnostica =="
 out=$(bash "$SCRIPT" "$TMP/inesistente" 2>&1); rc=$?

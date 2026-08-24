@@ -37,7 +37,9 @@ su cartelle di altri utenti).
 
 1. Metti l'elenco ragazzi dell'anno in `anagrafica/elenco_ragazzi.csv`
    (mai in git: vedi §5; per una prova copia `elenco_ragazzi_example.csv`,
-   dati finti)
+   dati finti). Se non ce l'hai, non serve crearlo a mano: il primo
+   `make segnaletiche` genera l'elenco dal registro delle foto (vedi §3,
+   limiti compresi)
 2. `make anagrafica` → genera `dati/squadriglie.json` in modalità reale
    (squadriglie ricavate dal CSV, tutti i campi dei ragazzi)
    `make anagrafica ANONIMO=1` → json anonimo: solo i nomi delle
@@ -111,23 +113,36 @@ Incrementale e non distruttivo, lo stesso patto di `make foto`:
   né la riga di registro;
 - l'incrocio con l'anagrafica (`elenco_ragazzi.csv`, per nome+cognome+
   squadriglia) è silenzioso quando torna; in caso di mismatch arriva un
-  warning con il file coinvolto ma l'import comunque si completa.
+  warning con il file coinvolto ma l'import comunque si completa;
+- **se l'elenco ragazzi non esiste**, a fine passata viene generato dal
+  registro (nome;cognome;squadriglia per ogni ragazzo fotografato): non serve
+  preparare il CSV a mano, il primo `make segnaletiche` basta. Solo creazione:
+  se il file c'è già (fornito o corretto a mano) l'import non lo tocca mai.
+  Limiti dell'elenco generato: contiene solo i ragazzi fotografati, con nomi e
+  cognomi nel formato minuscolo dei filename — irrilevante in modalità anonima
+  (il sito mostra solo codici); in modalità reale correggere il CSV dopo la
+  generazione. Se arrivano nuovi ragazzi DOPO la prima generazione: si
+  aggiungono a mano, oppure si rigenera da zero con
+  `rm anagrafica/elenco_ragazzi.csv && make segnaletiche`.
 
 Correggere un mismatch: tipicamente è un typo nel filename (`mario_rossii_blu`)
-o un ragazzo mancante nell'export CSV. Si sistema la causa (filename sulla
-share oppure export CSV); se era stato creato un codice sbagliato, si
-rimuovono la copia in `reparto/` e la relativa riga dal registro con un
-editor di testo, poi si rilancia l'import: il ragazzo riparte con il codice
-giusto. Test rapidi: `bash scripts/test_importa_segnaletiche.sh`.
+o un ragazzo mancante nell'export CSV (con l'elenco generato dai filename,
+rileggerlo a fine import è il modo per scovare i typo). Si sistema la causa
+(filename sulla share oppure export CSV); se era stato creato un codice
+sbagliato, si rimuovono la copia in `reparto/` e la relativa riga dal registro
+con un editor di testo, poi si rilancia l'import: il ragazzo riparte con il
+codice giusto. Test rapidi: `bash scripts/test_importa_segnaletiche.sh`.
 
 Dopo l'import la catena è sempre:
 
     make segnaletiche && make anagrafica && make build
 
 In modalità anonima (`make anagrafica ANONIMO=1`) le pagine squadriglia
-mostrano la griglia delle foto segnaletiche per **codice**: nessun nome, URL
-e filename parlano la lingua dei codici. In modalità reale i contenuti restano
-quelli del CSV; anche lì URL e foto usano il codice, non il nome.
+mostrano la griglia delle foto segnaletiche per **codice** con accanto le
+**iniziali puntate** derivate dal registro (es. `M. R.`): abbastanza da
+riconoscere chi è chi, senza pubblicare nomi completi. Nessun nome intero,
+URL e filename parlano la lingua dei codici. In modalità reale i contenuti
+restano quelli del CSV; anche lì URL e foto usano il codice, non il nome.
 
 #### Il registro dei codici (`anagrafica/registro_segnaletiche.csv`)
 

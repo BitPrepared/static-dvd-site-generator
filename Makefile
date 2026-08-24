@@ -149,6 +149,8 @@ foto-watch: ## import continuo delle foto mentre arrivano (Ctrl-C per fermare)
 # anagrafica/registro_segnaletiche.csv (gitignored), copia rinominata in
 # dvd/angolisq/materiale/reparto/<codice>.<ext>. Incrementale e non
 # distruttivo; gira sull'host, NON usa il container (come make foto).
+# Se anagrafica/elenco_ragazzi.csv manca, viene generato dal registro a fine
+# passata (solo creazione, mai aggiornamento): non serve prepararlo a mano.
 SEGNALETICHE_SRC ?= $(HOME)/share_disks/staff/segnaletiche
 
 segnaletiche: ## importa e codifica le foto segnaletiche dalla share staff (incrementale, host)

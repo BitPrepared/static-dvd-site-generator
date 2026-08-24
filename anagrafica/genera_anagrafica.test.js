@@ -147,6 +147,18 @@ test('anonima (e2e): ANONIMO=1 -> json senza alcun valore anagrafico del CSV', (
   }
 });
 
+// ------------------------------- 1.6bis modalità anonima col registro (ini)
+
+test('anonima con registro: riga senza nome/cognome -> ini vuota, non errore', () => {
+  const csvSenzaNome = INTESTAZIONE + '\n'
+    + '"005";"";"";"F";"";"";"Topos";"";"";"";"";"";"";"";"";"BLU";"";"";"";"";""\n';
+  const registro = genera.parseRegistroContenuto(
+    'nome;cognome;squadriglia;codice\n;;blu;x1_blu\n');
+  const squadriglie = genera.generaSquadriglie(genera.leggiCsv(csvSenzaNome).righe, { anonimo: true, registro });
+
+  assert.deepEqual(squadriglie.blu.members, { x1_blu: { ini: '' } });
+});
+
 // ------------------------------------------- 1.7 scrittura atomica e log
 
 test('scrittura: json scritto, nessun .tmp residuo, log sul canale diagnostico', () => {
@@ -301,15 +313,19 @@ test('valvola (unit): registro assente -> chiavi legacy nomecognome, identico a 
   assert.deepEqual(Object.keys(conValvola.oro.members), ['pippozoo', 'ginevrapero']);
 });
 
-test('anonima (unit): col registro i members portano i soli codici con foto', () => {
+test('anonima (unit): col registro i members portano codice e iniziali puntate', () => {
   const csv = INTESTAZIONE + '\n' + RIGA_PIPPO + '\n' + RIGA_GINEVRA + '\n'
     + RIGA_CHIARA + '\n' + RIGA_MARIA + '\n';
   const squadriglie = genera.generaSquadriglie(genera.leggiCsv(csv).righe,
     { anonimo: true, registro: genera.parseRegistroContenuto(REGISTRO_FINTO) });
 
-  // Maria non ha foto: in anonima non compare; gli altri solo codice
-  assert.deepEqual(squadriglie.oro, { name: 'oro', members: { pz1_oro: {}, gp1_oro: {} } });
-  assert.deepEqual(squadriglie.blu, { name: 'blu', members: { cd1_blu: {} } });
+  // Maria non ha foto: in anonima non compare; gli altri codice + ini
+  // (iniziale nome + prima parola del cognome: Dell'Orto -> D.)
+  assert.deepEqual(squadriglie.oro, {
+    name: 'oro',
+    members: { pz1_oro: { ini: 'P. Z.' }, gp1_oro: { ini: 'G. P.' } }
+  });
+  assert.deepEqual(squadriglie.blu, { name: 'blu', members: { cd1_blu: { ini: 'C. D.' } } });
 });
 
 test('anonima (unit): senza registro members vuoti come nella pipeline precedente', () => {
@@ -367,8 +383,8 @@ test('anonima (e2e): ANONIMO=1 col registro -> soli codici, grep anti-dati sul j
       assert.ok(!scritto.includes(valore), `il json anonimo non deve contenere '${valore}'`);
     }
     assert.deepEqual(JSON.parse(scritto), {
-      oro: { name: 'oro', members: { pz1_oro: {}, gp1_oro: {} } },
-      blu: { name: 'blu', members: { cd1_blu: {} } }
+      oro: { name: 'oro', members: { pz1_oro: { ini: 'P. Z.' }, gp1_oro: { ini: 'G. P.' } } },
+      blu: { name: 'blu', members: { cd1_blu: { ini: 'C. D.' } } }
     });
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });

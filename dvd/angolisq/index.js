@@ -93,6 +93,25 @@ function fotoReparto(dirReparto, codice) {
   return foto || null;
 }
 
+// Thumb a larghezza fissa con altezza in proporzione: per il fotogruppo,
+// che la home pubblica a tutta colonna (template home width="650"), a
+// differenza dei thumb piccoli della griglia reparto.
+function createThumbLarga(loggerParent, fullpathIn, fullpathOut, larghezza) {
+  if (fs.existsSync(fullpathOut)) {
+    return Promise.resolve(); // thumb già presente: non si rigenera
+  }
+  loggerParent.info('create thumb larga ' + larghezza + ' di ' + path.basename(fullpathIn));
+  return new Promise((resolve, reject) => {
+    gm(fs.readFileSync(fullpathIn)).resize(larghezza).write(fullpathOut, function(err) {
+      if (err) {
+        reject(new Error("thumb di " + fullpathIn + ": " + (err.message || err)));
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
 function concat_ifnotempty($str, $append){
   if ( $append ){
     return $str.concat($append).concat(' ');
@@ -177,15 +196,20 @@ Angolisq.prototype.build = async function () {
   await creaThumbCartella(loggerParent, path.join(__dirname, 'materiale/squadriglia/'), 450);
 
   // reparto: solo i codici noti al json (+ fotogruppo), gli estranei
-  // vengono segnalati e non pubblicati
-  await creaThumbCartella(loggerParent, dirReparto + '/', 150, this.codiciAttesiReparto);
-
-  //sovrascrivo con una thumb piu grande
-  //fsextra.removeSync(path.join(dirReparto, 'thumb_fotogruppo.jpg'));
-  const fotogruppo = path.join(__dirname, 'materiale/reparto/fotogruppo.jpg');
+  // vengono segnalati e non pubblicati.
+  //
+  // fotogruppo è particolare: la home lo pubblica a tutta colonna, quindi
+  // la SUA thumb va creata LARGA 650 con altezza in proporzione — e PRIMA
+  // del batch da 150, che altrimenti la crea piccola e per sempre (i thumb
+  // esistenti non si rigenerano). La rimozione preventiva rende automatico
+  // anche l'aggiornamento quando la foto di gruppo cambia: senza, sul disco
+  // resterebbe per sempre la vecchia thumb.
+  const fotogruppo = path.join(dirReparto, 'fotogruppo.jpg');
   if (fs.existsSync(fotogruppo)) {
-    await createThumb(loggerParent, fotogruppo, path.join(__dirname, 'materiale/reparto/thumb_fotogruppo.jpg'), 650);
+    fsextra.removeSync(path.join(dirReparto, 'thumb_fotogruppo.jpg'));
+    await createThumbLarga(loggerParent, fotogruppo, path.join(dirReparto, 'thumb_fotogruppo.jpg'), 650);
   }
+  await creaThumbCartella(loggerParent, dirReparto + '/', 150, this.codiciAttesiReparto);
 
 }
 

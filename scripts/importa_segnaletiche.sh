@@ -19,7 +19,11 @@
 #      nulla: stesso patto non distruttivo di importa_foto.sh;
 #   3. incrocio con anagrafica/elenco_ragazzi.csv per nome+cognome+
 #      squadriglia: match silenzioso, mismatch -> warning con il file e il
-#      motivo (tipico: typo nel filename) ma import comunque completato.
+#      motivo (tipico: typo nel filename) ma import comunque completato;
+#   4. se l'elenco ragazzi NON esiste, a fine passata viene generato dal
+#      registro (nome;cognome;squadriglia per ogni ragazzo fotografato):
+#      solo creazione, mai aggiornamento — un elenco fornito o corretto a
+#      mano non viene piu' toccato.
 #
 # Uso:
 #   scripts/importa_segnaletiche.sh [DIR_SORGENTE]     una passata
@@ -29,8 +33,9 @@
 #   SEGNALETICHE_DST         destinazione (default <repo>/dvd/angolisq/materiale/reparto)
 #   REGISTRO_SEGNALETICHE    registro dei codici
 #                            (default <repo>/anagrafica/registro_segnaletiche.csv)
-#   ELENCO_RAGAZZI           elenco ragazzi per l'incrocio
-#                            (default <repo>/anagrafica/elenco_ragazzi.csv)
+#   ELENCO_RAGAZZI           elenco ragazzi per l'incrocio; generato dal
+#                            registro se assente (default
+#                            <repo>/anagrafica/elenco_ragazzi.csv)
 #   SEGNALETICHE_ESTENSIONI  elenco estensioni immagine, separato da spazi
 #                            (default "jpg jpeg png gif bmp tif tiff webp heic heif")
 #
@@ -41,7 +46,10 @@ set -u
 muori() { echo "ERRORE: $*" >&2; exit 2; }
 adesso() { date '+%H:%M:%S'; }
 
-usage() { awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print } NR > 1 && !/^#/ { exit }' "$0"; }
+# NB l'ordine delle regole conta: la modifica di $0 fatta da sub() e' visibile
+# alle regole successive della stessa riga, quindi il test "non-commento" (che
+# deve uscire) va prima di sub, altrimenti si stampa solo la prima riga.
+usage() { awk 'NR == 1 { next } !/^#/ { exit } { sub(/^# ?/, ""); print }' "$0"; }
 
 [ $# -le 1 ] || muori "troppi argomenti (uso: $0 [DIR_SORGENTE], -h per l'aiuto)"
 for a in "$@"; do
@@ -172,7 +180,8 @@ carica_elenco() {
   CHIAVI_ELENCO="$TMP/chiavi_elenco.txt"
   [ -f "$ELENCO" ] || {
     echo "WARNING: elenco ragazzi non trovato ($ELENCO): incrocio saltato
-  (per una prova: cp anagrafica/elenco_ragazzi_example.csv $ELENCO)" >&2
+  (se non ce l'hai va bene: a fine passata verra' generato dal registro delle
+   segnaletiche; per una prova: cp anagrafica/elenco_ragazzi_example.csv $ELENCO)" >&2
     return 1
   }
   local intestazione linea idx=0 i_n=-1 i_c=-1 i_s=-1 campo
@@ -209,6 +218,37 @@ elenco_contiene() { # nome cognome squadriglia -> 0 se presente nell'elenco
   grep -qxF "$(chiave_identita "$1" "$2" "$3")" "$CHIAVI_ELENCO"
 }
 
+# ------------------------------------------------ generazione dell'elenco
+
+# Elenco ragazzi generato dal registro quando manca: le identita' registrate
+# sono gia' nome;cognome;squadriglia, esattamente le colonne obbligatorie del
+# CSV dell'anagrafica (cosi' make segnaletiche basta, senza scrivere il CSV a
+# mano). SOLO creazione, mai aggiornamento: se il file esiste (fornito o
+# corretto a mano) non viene toccato — e quindi i ragazzi arrivati DOPO la
+# prima generazione vanno aggiunti a mano, oppure si rigenera da zero
+# cancellando l'elenco e re-importando. Scrittura su temporaneo nella stessa
+# cartella + mv: un elenco scritto a meta' apparirebbe "esistente" alla
+# passata successiva e bloccherebbe per sempre la rigenerazione.
+genera_elenco() {
+  [ -f "$ELENCO" ] && return 0
+  if [ "${#REG_CODICE[@]}" -eq 0 ]; then
+    echo "[$(adesso)] registro vuoto: niente da generare in $ELENCO"
+    return 0
+  fi
+  local tmp="$ELENCO.tmp" i
+  mkdir -p "$(dirname "$ELENCO")" || muori "cartella dell'elenco non creabile: $(dirname "$ELENCO")"
+  {
+    printf 'nome;cognome;squadriglia\n'
+    for ((i=0; i<${#REG_CODICE[@]}; i++)); do
+      printf '%s;%s;%s\n' "${REG_NOME[i]}" "${REG_COGNOME[i]}" "${REG_SQ[i]}"
+    done
+  } > "$tmp" || muori "elenco ragazzi non scrivibile: $tmp"
+  mv -f -- "$tmp" "$ELENCO" || muori "spostamento fallito: $tmp -> $ELENCO"
+  echo "[$(adesso)] generato $ELENCO dal registro delle segnaletiche (${#REG_CODICE[@]} ragazzi)
+  rileggilo: nomi/cognomi nel formato minuscolo dei filename e solo ragazzi fotografati;
+  se lo correggi o lo fornisci tu, l'import non lo tocca piu'"
+}
+
 # ------------------------------------------------------------------- passata
 
 lista_immagini() {
@@ -235,6 +275,7 @@ passata() {
   mapfile -d '' pend < <(lista_immagini)
   if [ "${#pend[@]}" -eq 0 ]; then
     echo "[$(adesso)] nessuna foto nuova o modificata in $SRC"
+    genera_elenco                          # il registro puo' anticipare la share
     return 0
   fi
   echo "[$(adesso)] ${#pend[@]} foto da esaminare in $SRC"
@@ -290,12 +331,17 @@ passata() {
       continue
     fi
 
-    # incrocio con l'anagrafica: solo diagnostica, l'import prosegue comunque
-    if ! elenco_contiene "$nome" "$cognome" "$sq"; then
+    # incrocio con l'anagrafica: solo diagnostica, l'import prosegue comunque.
+    # Senza elenco non c'e' nessun confronto che possa fallire: niente warning
+    # per-foto (basta l'avviso unico di carica_elenco; il vuoto lo colma
+    # genera_elenco a fine passata)
+    if [ "$ELENCO_OK" -eq 1 ] && ! elenco_contiene "$nome" "$cognome" "$sq"; then
       echo "WARNING: $base ($codice): nessuna corrispondenza nell'elenco ragazzi per nome='$nome' cognome='$cognome' squadriglia='$sq'
   tipico typo nel filename o ragazzo mancante nell'export: la foto resta fuori dal sito finche' filename o CSV non vengono corretti (poi re-import + make anagrafica + make build)" >&2
     fi
   done
+
+  genera_elenco
 
   rm -f "$CHIAVI_ELENCO"
   if [ "$ok" -eq 0 ] && [ "$ko" -eq 0 ]; then
