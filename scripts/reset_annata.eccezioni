@@ -1,0 +1,13 @@
+# Eccezioni del reset d'annata (scripts/reset_annata.sh, Readme.md §6):
+# percorsi da NON rimuovere anche se cadono nel perimetro del reset.
+# Un percorso per riga, relativo alla radice del repository; commenti con #.
+# Percorsi esatti (niente glob); una voce che non corrisponde a nessun file
+# produce un warning anti-typo senza fermare il reset.
+#
+# Questo file e' tracciato in git: sopravvive al reset stesso ed evolve col
+# codice. Per conservare un contenuto non tracciato (gitignored) aggiungi qui
+# il suo percorso.
+
+# La pagina staff e' gitignored per scelta di privacy (contiene i nomi dello
+# staff): sopravvive ai reset e viene aggiornata a mano dall'operatore.
+dvd/documenti/src/staff.hbs

@@ -192,3 +192,63 @@ dati finti di prova: dati di minori mai in git, mai in release,
 mai su servizi esterni. Si muovono solo via scp/rsync fra le macchine
 di fiducia. A fine stagione archivia i dati anagrafici fuori dalle
 cartelle git.
+
+## 6. Reset d'annata (`make reset`)
+
+A campo concluso e materiale archiviato, `make reset` riporta il repository
+allo stato di fresh clone in un solo comando dichiarato. La logica sta in
+`scripts/reset_annata.sh` (richiamabile e testabile da sola:
+`bash scripts/test_reset_annata.sh`).
+
+**Prima di lanciarlo: il backup lo fai TU, fuori dal repo** (foto e
+anagrafica dove le archivi di norma, §4). Il reset non copia nulla:
+rimuove, e la rimozione è irreversibile. Lo stesso comando te lo ricorda
+prima di chiedere conferma; `FORCE=1 make reset` salta la domanda per
+l'uso in script.
+
+### Cosa viene rimosso
+
+| Area | Percorsi |
+|---|---|
+| output | `build/` (ricreata vuota come `make clean`), `golden/`, `materiale_archiviato/` |
+| anagrafica | `dati/squadriglie.json` e i file dati reali in `anagrafica/` (`*.csv *.xls *.xlsm *.xlsx *.ods` non tracciati) |
+| src | sotto `dvd/*/src/` solo i file NON tracciati (le pagine generate a ogni build) |
+| materiale | il contenuto di `dvd/*/materiale/` di tutte le sezioni (le cartelle restano, vuote) |
+
+Prima della conferma lo script mostra i conteggi reali (file e byte) per
+area: controllali — sono la prova di cosa sta per perdere.
+
+### Cosa sopravvive
+
+Tutto ciò che git traccia: codice, template, pagine scritte a mano
+(varie/documenti/esercitazioni/programmi), `dati/*.json` di struttura,
+fixture `*_example*`. Per costruzione il reset non può toccare alcun file
+tracciato, né `scripts/star_jedi/` (font ri-scaricabile con `make font`).
+In più sopravvivono i percorsi elencati in `scripts/reset_annata.eccezioni`
+(vedi sotto): oggi `dvd/documenti/src/staff.hbs`, la pagina staff
+gitignored per privacy che aggiorni a mano.
+
+Nota: anche i `.gitignore` NON tracciati dentro `dvd/*/materiale/` seguono
+il loro contenuto e vengono rimossi; quelli tracciati (angolisq,
+diariofotografico, home) restano.
+
+### Aggiungere un'eccezione
+
+`scripts/reset_annata.eccezioni` è tracciato in git (sopravvive al reset
+stesso ed evolve col codice): un percorso per riga, relativo alla radice
+del repo, commenti con `#`, percorsi esatti senza glob. Una voce che non
+corrisponde a nessun file produce un warning anti-typo ma non ferma il
+reset. Per conservare un contenuto non tracciato aggiungi lì il suo
+percorso.
+
+### Dopo il reset: flusso git del nuovo anno
+
+1. Backup esterno fatto (§4), poi `make reset` (conferma coi conteggi)
+2. Il repo è come un fresh clone: il codice resta all'ultima annata
+3. Tagga o verifica il tag `v<anno>` dell'annata conclusa (§4)
+4. Aggiorna le config d'annata in un branch/commit nuovo (`dati/campo.json`,
+   categorie, `materiale*.json`) — il reset non le tocca, si sistemano via
+   git come qualunque modifica di codice
+5. `make init` solo se cambiano le dipendenze npm, poi la prima
+   `make build` della nuova annata
+6. Riparti dal §2 (pre-campo): anagrafica nuova con gli example come modello

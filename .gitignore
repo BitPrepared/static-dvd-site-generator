@@ -16,3 +16,4 @@ openspec/changes/*
 # sample foto segnaletiche del passato con nomi veri nei filename -> come il
 # resto del materiale, mai in git
 /materiale_archiviato/
+/.firefox/

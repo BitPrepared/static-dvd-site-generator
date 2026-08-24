@@ -17,9 +17,7 @@ DEBUG=False
 # nel json (make anagrafica ANONIMO=1)
 ANONIMO ?= 0
 
-# esistono cartelle con nomi di comando, quindi automaticamente viene skippato il comando pensando
-# sia stata fatta gia la compilazione, cosi le si ignora.
-.PHONY: help build clean anagrafica font footer golden-salva golden-confronta check-executor foto foto-watch segnaletiche
+.PHONY: help build clean anagrafica font footer golden-salva golden-confronta check-executor foto foto-watch segnaletiche reset
 
 # aiuto: elenco dei comandi disponibili, estratto dai commenti ## accanto a
 # ogni target (primo target del file: anche un "make" nudo mostra l'aiuto)
@@ -155,6 +153,13 @@ SEGNALETICHE_SRC ?= $(HOME)/share_disks/staff/segnaletiche
 
 segnaletiche: ## importa e codifica le foto segnaletiche dalla share staff (incrementale, host)
 	@env $(if $(SEGNALETICHE_ESTENSIONI),SEGNALETICHE_ESTENSIONI="$(SEGNALETICHE_ESTENSIONI)") bash scripts/importa_segnaletiche.sh "$(SEGNALETICHE_SRC)"
+
+# reset d'annata (Readme.md §6): riporta il repo allo stato di fresh clone
+# rimuovendo i dati dell'annata e l'output generato. Il backup esterno va
+# fatto PRIMA: la rimozione e' irreversibile. Script dedicato per restare
+# testabile da solo, stesso patto di foto/segnaletiche.
+reset: ## riporta il repo allo stato di fresh clone (backup esterno PRIMA! vedi Readme §6)
+	FORCE=$(FORCE) bash scripts/reset_annata.sh
 
 
 # 
