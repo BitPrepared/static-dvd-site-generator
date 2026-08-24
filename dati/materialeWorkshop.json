@@ -19,6 +19,10 @@
                 "description": "Gioco Oro"
             },
             {
+                "filename": "arancio.zip",
+                "description": "Gioco Arancio"
+            },
+            {
                 "filename": "credenziali_ragazzi.pdf",
                 "description": "Credenziali Code.org"
             }

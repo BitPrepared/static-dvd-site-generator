@@ -17,6 +17,10 @@
             {
                 "filename": "rosso.html",
                 "description": "Prbmm Equipaggio Rosso"
+            },
+            {
+                "filename": "arancio.html",
+                "description": "Prbmm Equipaggio Arancio"
             }
         ]
     },
