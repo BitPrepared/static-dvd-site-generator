@@ -64,6 +64,21 @@ function leggiDatiObbligatori(elenco) {
 
 // build() delle sezioni con thumb è async: il flusso attende che i
 // thumb siano su disco prima del rendering (change fix-thumb-logger)
+// Messaggio "missing" completo: titolo + responsabile + DOVE mettere il
+// materiale che manca (attesoIn e' repo-relative, lo calcolano le sezioni
+// nei loro check). Senza attesoIn resta il messaggio di una volta.
+function messaggioMissing(currentValue) {
+  const titolo = currentValue.title || currentValue.description || '?';
+  const responsabili = currentValue.responsabile
+    ? ' Responsabile [' + currentValue.responsabile.join(',') + ']'
+    : '';
+  const dove = currentValue.attesoIn
+    ? ' -> mettilo in ' + currentValue.attesoIn +
+      (currentValue.suggerimento ? ' (' + currentValue.suggerimento + ')' : '')
+    : '';
+  return 'missing: ' + titolo + '!' + responsabili + dove;
+}
+
 async function main() {
   const { materialeAngoliSq, materialeWorkshop, materialeDocumentiGenerali, materialeVarie, materialeAltreAttivita, squadriglie, categories } = leggiDatiObbligatori(DATI_OBBLIGATORI);
 
@@ -101,8 +116,7 @@ async function main() {
   var home = new Home(logger);
   const missingHome = home.check();
   missingHome.forEach((currentValue, index, arr) => {
-    const responsabili = currentValue.responsabile.join(',');
-    logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
+    logger.warn(messaggioMissing(currentValue));
   });
   home.clean();
   home.build();
@@ -110,19 +124,13 @@ async function main() {
   var esercitazioni = new Esercitazioni(logger, materialeWorkshop, materialeAltreAttivita);
   const missing = esercitazioni.check();
   missing.forEach((currentValue, index, arr) => {
-    if (currentValue.responsabile) {
-      const responsabili = currentValue.responsabile.join(',');
-      logger.warn('missing: '+currentValue.title+'! Responsabile ['+responsabili+']');
-    } else {
-      logger.warn('missing: ' + currentValue.description + '!');
-    }
+    logger.warn(messaggioMissing(currentValue));
   });
 
   var angolisq = new Angolisq(logger, squadriglie, materialeAngoliSq);
   const missingAngoli = angolisq.check();
   missingAngoli.forEach((currentValue, index, arr) => {
-    const responsabili = currentValue.responsabile.join(',');
-    logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
+    logger.warn(messaggioMissing(currentValue));
   });
   angolisq.clean();
   await angolisq.build();
@@ -133,35 +141,20 @@ async function main() {
   var documentiGenerali = new DocumentiGenerali(logger, materialeDocumentiGenerali);
   const missingDocumentiGenerali = documentiGenerali.check();
   missingDocumentiGenerali.forEach((currentValue, index, arr) => {
-    if (currentValue.responsabile) {
-      const responsabili = currentValue.responsabile.join(',');
-      logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-    } else {
-      logger.warn('missing: ' + currentValue.description + '!');
-    }
+    logger.warn(messaggioMissing(currentValue));
   });
   await documentiGenerali.build();
 
   var varie = new Varie(logger, materialeVarie);
   const missingVarie = varie.check();
   missingVarie.forEach((currentValue, index, arr) => {
-    if (currentValue.responsabile) {
-      const responsabili = currentValue.responsabile.join(',');
-      logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-    } else {
-      logger.warn('missing: ' + currentValue.description + '!');
-    }
+    logger.warn(messaggioMissing(currentValue));
   });
 
   var diariofotografico = new DiarioFotografico(logger, authorizedExts ,categories);
   const missingDiario = diariofotografico.check();
   missingDiario.forEach((currentValue, index, arr) => {
-    if (currentValue.responsabile) {
-      const responsabili = currentValue.responsabile.join(',');
-      logger.warn('missing: ' + currentValue.title + '! Responsabile [' + responsabili + ']');
-    } else {
-      logger.warn('missing: ' + currentValue.description + '!');
-    }
+    logger.warn(messaggioMissing(currentValue));
   });
 
   diariofotografico.clean();

@@ -41,18 +41,9 @@
     {
         "title": "Multimediale",
         "dir": "multimediale",
+        "cartella_libera": true,
         "responsabile": [
             "Riccardo"
-        ],
-        "files": [
-            {
-                "filename": "Multimediale-foto_REV01.odp",
-                "description": "Presentazione Multimediale Sorgente"
-            },
-            {
-                "filename": "Multimediale-foto_REV01.pdf",
-                "description": "Presentazione Multimediale PDF"
-            }
         ]
     }
 ]

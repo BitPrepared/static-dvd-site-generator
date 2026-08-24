@@ -66,7 +66,7 @@ crea_albero() { # $1 = radice
   echo "pagina generata" > "$R/dvd/diariofotografico/src/giorno1.hbs"
   echo "home generata"   > "$R/dvd/home/src/index.hbs"
   echo "foto giorno uno" > "$R/dvd/diariofotografico/materiale/foto/giorno1/a.jpg"
-  echo "lettera reparto" > "$R/dvd/home/materiale/lettera/b.png"
+  echo "lettera reparto" > "$R/dvd/home/materiale/lettera/b.png" # eccezione attiva
   echo "sample passato"  > "$R/materiale_archiviato/reparto_pre-codifica/c.jpg"
   echo '{"manifest": true}' > "$R/golden/manifest.json"
   echo "<html>sito</html>"  > "$R/build/index.html"
@@ -84,6 +84,7 @@ controlla_sopravvissuti() { # $1 etichetta scenario
   local tag="$1" f
   for f in dvd/varie/src/index.hbs dvd/varie/src/utility_scout.hbs \
            dvd/documenti/src/index.hbs dvd/documenti/src/staff.hbs \
+           dvd/home/materiale/lettera/b.png \
            anagrafica/elenco_ragazzi_example.csv anagrafica/registro_segnaletiche_example.csv \
            anagrafica/genera_anagrafica.js dati/campo.json scripts/star_jedi/StarJedi.ttf; do
     [ -e "$REPO/$f" ] && ok "$tag: sopravvive $f" || no "$tag: sopravvive $f"
@@ -120,7 +121,7 @@ if command -v script >/dev/null 2>&1; then
   grep -q "Eccezioni applicate.*staff.hbs" <<<"$out" \
     && ok "riepilogo dichiara l'eccezione staff.hbs" || no "riepilogo dichiara l'eccezione staff.hbs ($out)"
   for f in dvd/diariofotografico/src/giorno1.hbs dvd/home/src/index.hbs \
-           dvd/diariofotografico/materiale/foto/giorno1/a.jpg dvd/home/materiale/lettera/b.png \
+           dvd/diariofotografico/materiale/foto/giorno1/a.jpg \
            golden materiale_archiviato anagrafica/elenco_ragazzi.csv \
            anagrafica/elenco_ragazzi.old.csv anagrafica/registro_segnaletiche.csv \
            dati/squadriglie.json build/index.html build/img/footer.png; do

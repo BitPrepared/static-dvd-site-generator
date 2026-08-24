@@ -21,6 +21,7 @@ DiarioFotografico.prototype.check = function () {
     missing.push({
       "title": "cartella foto",
       "dir": "foto",
+      "attesoIn": "dvd/diariofotografico/materiale/foto/",
       "responsabile" : [
         "andrea", "samuele"
       ]
@@ -49,8 +50,52 @@ function createThumb(loggerParent, fullpathIn, fullpathOut) {
   });
 }
 
+// Diagnostica categorie: stessa regola ESATTA del plugin gallery — una
+// cartella di secondo livello in foto/<giorno>/<categoria> finisce in una
+// pagina categoria solo se il suo nome coincide letteralmente con una voce
+// di dati/categorieDiarioFotografico.json (maiuscole e underscore contano).
+// Una cartella non dichiarata non ha pagina categoria (le sue foto restano
+// solo nella pagina del giorno); una categoria dichiarata senza cartella
+// genera una pagina vuota.
+DiarioFotografico.prototype.controllaCategorie = function () {
+  const fotoSrc = path.join(__dirname, 'materiale/foto/');
+  if (!fs.existsSync(fotoSrc)) {
+    return;
+  }
+  const dichiarate = new Set(this.categories);
+  const trovate = new Set();
+  fs.readdirSync(fotoSrc).forEach((giorno) => {
+    const perGiorno = path.join(fotoSrc, giorno);
+    if (!fs.lstatSync(perGiorno).isDirectory()) {
+      return;
+    }
+    // il giorno e' esso stesso una pagina: il plugin ci mette le foto del giorno
+    trovate.add(giorno);
+    fs.readdirSync(perGiorno).forEach((categoria) => {
+      const perCategoria = path.join(perGiorno, categoria);
+      if (!fs.lstatSync(perCategoria).isDirectory()) {
+        return;
+      }
+      trovate.add(categoria);
+      if (!dichiarate.has(categoria)) {
+        this.logger.warn('foto: la cartella "' + categoria + '" (in ' + giorno +
+          '/) non corrisponde a nessuna categoria dichiarata in ' +
+          'dati/categorieDiarioFotografico.json: le sue foto non avranno una ' +
+          'pagina categoria (aggiungi la categoria o rinomina la cartella)');
+      }
+    });
+  });
+  dichiarate.forEach((categoria) => {
+    if (!trovate.has(categoria)) {
+      this.logger.warn('categoria "' + categoria +
+        '" senza nessuna cartella in foto/: la sua pagina verra\' generata vuota');
+    }
+  });
+};
+
 DiarioFotografico.prototype.build = async function () {
   this.logger.info('DiarioFotografico', 'build');
+  this.controllaCategorie();
   var contents = fs.readFileSync(path.join(__dirname, 'template/index.hbs'), 'utf8');
   fsextra.ensureDirSync(path.join(__dirname, 'src/'));
   fs.writeFileSync(path.join(__dirname, 'src/index.hbs'), contents);

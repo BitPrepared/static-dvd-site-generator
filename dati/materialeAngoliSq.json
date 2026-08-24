@@ -9,6 +9,7 @@
     {
         "title": "Urli Squadriglia",
         "dir": "urli",
+        "per_squadriglia": ["avi", "mp3", "wav", "ogg", "m4a", "mp4"],
         "responsabile": [
             "Riccardo"
         ]

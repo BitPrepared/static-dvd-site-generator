@@ -13,17 +13,67 @@ var Angolisq = function (logger, squadriglie, materiale) {
   this.squadriglie = squadriglie;
 };
 
+// Percorso repo-relative dove si aspetta il materiale: compare nei messaggi
+// "missing" per dire a chi builda dove mettere il file che manca.
+function conAttesoIn(descrittore, percorso) {
+  descrittore.attesoIn = percorso;
+  return descrittore;
+}
+
+// Materiali "per squadriglia" (gli urli): il descrittore dichiara
+// per_squadriglia con le ESTENSIONI ammesse (es. ["avi","mp3"]) e ci si
+// aspetta ALMENO un file per squadriglia col pattern
+//   <squadriglia>.<ext>  oppure  <squadriglia>_N.<ext>  (secondi, terzi urli)
+// I messaggi missing dicono quindi nome esatto e alternative, anno per anno.
+function urliDiSquadriglia(dirUrli, sqname, estensioni) {
+  if (!fs.existsSync(dirUrli)) {
+    return [];
+  }
+  const re = new RegExp('^' + sqname + '(_[0-9]+)?\\.(' + estensioni.join('|') + ')$', 'i');
+  const numero = (f) => { const m = f.match(/_(\d+)\./); return m ? parseInt(m[1], 10) : 0; };
+  return fs.readdirSync(dirUrli)
+    .filter((f) => f.indexOf('thumb_') < 0 && re.test(f))
+    .sort((a, b) => numero(a) - numero(b) || a.localeCompare(b));
+}
+
+function valutaPerSquadriglia(logger, currentValue, squadriglie) {
+  var mancanti = [];
+  var base = 'dvd/angolisq/materiale/' + currentValue.dir + '/';
+  var estensioni = [].concat(currentValue.per_squadriglia);
+  Object.keys(squadriglie || {}).forEach(function (sq) {
+    var presenti = urliDiSquadriglia(path.join(__dirname, './materiale/', currentValue.dir), sq, estensioni);
+    if (presenti.length === 0) {
+      mancanti.push(conAttesoIn({
+        title: currentValue.title + ' (' + sq + ')',
+        responsabile: currentValue.responsabile,
+        suggerimento: estensioni.join('/') + ", anche <sq>_2.<ext> per piu' urli"
+      }, base + sq + '.' + estensioni[0]));
+    }
+  });
+  return mancanti;
+}
+
 function valuta(logger, materiale, squadriglie) {
   var missing = [];
   materiale.forEach((currentValue, index, arr) => {
     logger.info(currentValue.title);
     if (currentValue.dir) {
       if (!fs.existsSync(path.join(__dirname, './materiale/' + currentValue.dir + '/'))) {
-        missing.push(currentValue);
+        var voce = conAttesoIn(currentValue, 'dvd/angolisq/materiale/' + currentValue.dir + '/');
+        if (currentValue.per_squadriglia) {
+          // la cartella intera manca: di' anche COME si compone
+          voce.suggerimento = 'per ogni squadriglia (' +
+            Object.keys(squadriglie || {}).join(', ') + ') un file ' +
+            '<sq>.<ext> o <sq>_2.<ext>; estensioni: ' +
+            [].concat(currentValue.per_squadriglia).join(', ');
+        }
+        missing.push(voce);
+      } else if (currentValue.per_squadriglia) {
+        missing = missing.concat(valutaPerSquadriglia(logger, currentValue, squadriglie));
       }
     } else {
       if (!fs.existsSync(path.join(__dirname, './materiale/' + currentValue.file))) {
-        missing.push(currentValue);
+        missing.push(conAttesoIn(currentValue, 'dvd/angolisq/materiale/' + currentValue.file));
       }
     }
   });
@@ -131,10 +181,19 @@ Angolisq.prototype.build = async function () {
 
   const dirReparto = path.join(__dirname, 'materiale/reparto');
 
+  // urli dinamici: le estensioni ammesse stanno nel descrittore dei
+  // materiali ("per_squadriglia"); per ogni squadriglia si pubblicano TUTTI
+  // i file <sq>.<ext> e <sq>_N.<ext> presenti, nell'ordine del numero.
+  const descrittoreUrli = (this.materiale || []).find((m) => m.dir === 'urli');
+  const estensioniUrli = descrittoreUrli ? [].concat(descrittoreUrli.per_squadriglia || ['avi']) : ['avi'];
+
   for (var key in this.squadriglie) {
     var element = this.squadriglie[key];
     const sqname = element.name.toLowerCase();
     const members = element.members;
+
+    element.urli = urliDiSquadriglia(path.join(__dirname, 'materiale/urli'), sqname, estensioniUrli)
+      .map((f, i) => ({ nome: f, testo: i === 0 ? 'Urlo di Sq.' : 'Urlo di Sq. ' + (i + 1) }));
     var contentsSq = fs.readFileSync(path.join(__dirname, 'template/sq.hbs'), 'utf8');
     contentsSq = contentsSq.replace(new RegExp('##NAMESQ##', 'g'), sqname);
     fsextra.ensureDirSync(path.join(__dirname, 'src/'));

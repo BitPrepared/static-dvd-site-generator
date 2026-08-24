@@ -37,7 +37,10 @@ subtitle: Angoli di sq. ##NAMESQ##
                 <td>
                     <br/>
                     <div>
-                        <a title="urlo di squadriglia" href="{{rootPath}}angolisq/urli/##NAMESQ##.avi">Urlo di Sq.</a>
+                        {{!-- urli dinamici: tutti i file <sq>.<ext> e <sq>_N.<ext>
+                              presenti in urli/, annotati sul json dalla build --}}
+                        {{#each squadriglie.##NAMESQ##.urli}}<a title="urlo di squadriglia" href="{{../rootPath}}angolisq/urli/{{nome}}">{{testo}}</a><br/>
+                        {{/each}}
                         <p> PRBM
                             <ul>
                                 <li><a href="{{rootPath}}angolisq/hike/percorso-##NAMESQ##.pdf">Cartine percorso</a></li>

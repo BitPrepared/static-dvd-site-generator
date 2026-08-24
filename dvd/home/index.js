@@ -19,17 +19,24 @@ var Home = function (logger) {
     ]
 };
 
+// Percorso repo-relative dove si aspetta il materiale: compare nei messaggi
+// "missing" per dire a chi builda dove mettere il file che manca.
+function conAttesoIn(descrittore, percorso) {
+    descrittore.attesoIn = percorso;
+    return descrittore;
+}
+
 function valuta(logger, materiale) {
     var missing = [];
     materiale.forEach((currentValue, index, arr) => {
         logger.info(currentValue.title);
         if (currentValue.dir){
             if (!fs.existsSync(path.join(__dirname,'./materiale/' + currentValue.dir + '/'))) {
-                missing.push(currentValue);
+                missing.push(conAttesoIn(currentValue, 'dvd/home/materiale/' + currentValue.dir + '/'));
             }
         } else {
             if (!fs.existsSync(path.join(__dirname, './materiale/' + currentValue.file))) {
-                missing.push(currentValue);
+                missing.push(conAttesoIn(currentValue, 'dvd/home/materiale/' + currentValue.file));
             }
         }
     });

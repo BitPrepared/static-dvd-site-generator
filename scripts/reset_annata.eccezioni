@@ -11,3 +11,8 @@
 # La pagina staff e' gitignored per scelta di privacy (contiene i nomi dello
 # staff): sopravvive ai reset e viene aggiornata a mano dall'operatore.
 dvd/documenti/src/staff.hbs
+
+# La lettera della home (e la sua sub-lettera) resta valida tra gli anni:
+# si aggiorna a mano solo se cambia il testo, il reset non deve toccarla.
+# (Finche' il file non esiste ancora il reset stampa un warning anti-typo.)
+dvd/home/materiale/lettera

@@ -11,6 +11,13 @@ var DocumentiGenerali = function (logger, materiale) {
   this.materiale = materiale;
 };
 
+// Percorso repo-relative dove si aspetta il materiale: compare nei messaggi
+// "missing" per dire a chi builda dove mettere il file che manca.
+function conAttesoIn(descrittore, percorso) {
+  descrittore.attesoIn = percorso;
+  return descrittore;
+}
+
 function valuta(logger, materiale) {
   var missing = [];
   materiale.forEach((currentValue, index, arr) => {
@@ -18,13 +25,13 @@ function valuta(logger, materiale) {
     var curDir = currentValue.dir;
     if (currentValue.dir) {
       if (!fs.existsSync(path.join(__dirname, './materiale/' + curDir + '/'))) {
-        missing.push(currentValue);
+        missing.push(conAttesoIn(currentValue, 'dvd/documenti/materiale/' + curDir + '/'));
       }
       if (currentValue.files) {
-        currentValue.files.forEach((currentValue, index, arr) => {
-          if(currentValue.filename){
-            if (!fs.existsSync(path.join(__dirname, './materiale/' + curDir + '/' + currentValue.filename))) {
-              missing.push(currentValue);
+        currentValue.files.forEach((file) => {
+          if(file.filename){
+            if (!fs.existsSync(path.join(__dirname, './materiale/' + curDir + '/' + file.filename))) {
+              missing.push(conAttesoIn(file, 'dvd/documenti/materiale/' + curDir + '/' + file.filename));
             }
           }
         });
@@ -32,7 +39,7 @@ function valuta(logger, materiale) {
 
     } else {
       if (!fs.existsSync(path.join(__dirname, './materiale/' + currentValue.file))) {
-        missing.push(currentValue);
+        missing.push(conAttesoIn(currentValue, 'dvd/documenti/materiale/' + currentValue.file));
       }
     }
   });

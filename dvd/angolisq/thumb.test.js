@@ -168,6 +168,38 @@ test('fotogruppo: thumb larga 650 rigenerata, non quella piccola del batch', asy
   }
 });
 
+test('urli dinamici: tutti i file <sq>.<ext> e <sq>_N.<ext> finiscono sul json della pagina', async () => {
+  const ripristina = gmDisponibile ? null : installaStubGm();
+  const tmp = copiaIsolata({
+    'materiale/urli/oro.mp3': 'urlo uno',
+    'materiale/urli/oro_2.wav': 'urlo due',
+    'materiale/urli/blu.avi': 'urlo blu',
+    // non deve comparire: nome fuori pattern per oro
+    'materiale/urli/verde.mp3': 'altra sq'
+  });
+  try {
+    const Angolisq = require(path.join(tmp, 'index.js'));
+    const squadriglie = {
+      oro: { name: 'oro', members: {} },
+      blu: { name: 'blu', members: {} }
+    };
+    const materiale = [{
+      title: 'Urli Squadriglia', dir: 'urli',
+      per_squadriglia: ['avi', 'mp3', 'wav'], responsabile: ['Riccardo']
+    }];
+    await new Angolisq(loggerMuto(), squadriglie, materiale).build();
+
+    assert.deepEqual(squadriglie.oro.urli, [
+      { nome: 'oro.mp3', testo: 'Urlo di Sq.' },
+      { nome: 'oro_2.wav', testo: 'Urlo di Sq. 2' }
+    ]);
+    assert.deepEqual(squadriglie.blu.urli, [{ nome: 'blu.avi', testo: 'Urlo di Sq.' }]);
+  } finally {
+    if (ripristina) ripristina();
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test('immagine corrotta: la build fallisce con errore reale + file, senza crash su logger', async () => {
   const ripristina = gmDisponibile
     ? null

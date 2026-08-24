@@ -241,7 +241,8 @@ fixture `*_example*`. Per costruzione il reset non può toccare alcun file
 tracciato, né `scripts/star_jedi/` (font ri-scaricabile con `make font`).
 In più sopravvivono i percorsi elencati in `scripts/reset_annata.eccezioni`
 (vedi sotto): oggi `dvd/documenti/src/staff.hbs`, la pagina staff
-gitignored per privacy che aggiorni a mano.
+gitignored per privacy che aggiorni a mano, e `dvd/home/materiale/lettera`,
+la lettera (e sub-lettera) della home che resta valida tra gli anni.
 
 Nota: anche i `.gitignore` NON tracciati dentro `dvd/*/materiale/` seguono
 il loro contenuto e vengono rimossi; quelli tracciati (angolisq,
