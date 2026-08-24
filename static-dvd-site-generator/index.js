@@ -31,6 +31,8 @@ const DATI_OBBLIGATORI = [
     aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/materialeAltreAttivita.json" },
   { chiave: 'squadriglie', file: 'squadriglie.json',
     aiuto: "Genera l'anagrafica con 'make anagrafica' (serve anagrafica/elenco_ragazzi.csv)\n" +
+           "Hai gia' le foto segnaletiche? Prima 'make segnaletiche': scrive il registro\n" +
+           "anagrafica/registro_segnaletiche.csv e l'anagrafica usa i codici come chiavi\n" +
            'Per un test rapido: cp dati/squadriglie.example.json dati/squadriglie.json' },
   { chiave: 'categories', file: 'categorieDiarioFotografico.json',
     aiuto: "Dato di struttura del repo: 'git pull' o controlla dati/categorieDiarioFotografico.json" }
