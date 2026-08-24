@@ -140,7 +140,7 @@ async function main() {
       logger.warn('missing: ' + currentValue.description + '!');
     }
   });
-  documentiGenerali.build();
+  await documentiGenerali.build();
 
   var varie = new Varie(logger, materialeVarie);
   const missingVarie = varie.check();

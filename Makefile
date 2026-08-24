@@ -38,12 +38,15 @@ check-executor:
 # assets: nulla lo sovrascrive), così "Build finished!" resta l'ultimo
 # messaggio. Lo step footer e' fail-soft (change footer-dinamico-da-svg):
 # se fallisce subentra la riserva committita', se fallisce la pipeline la
-# build fallisce come sempre
+# build fallisce come sempre.
+# Il main del generatore (static-dvd-site-generator/index.js) e' montato come
+# il resto del codice: si modifica senza rifare make init (il Dockerfile ADDa
+# tutto il resto della cartella, che resta nell'immagine).
 build: check-executor ## genera il sito completo in build/ (footer + pipeline)
-	${EXECUTOR} run --rm -i $(USERNS_OPTION) -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" -e DEBUG=$(DEBUG) -t $(IMAGE_NAME):$(VERSION) bash -c '{ node scripts/genera_footer.js || { echo "WARNING: generazione footer fallita, uso la riserva scripts/footer_fallback.png" >&2; mkdir -p build/img; cp scripts/footer_fallback.png build/img/footer.png; } } && npm run build'
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -v "${PWD}/scripts:/usr/src/app/scripts$(MOUNT_OPTION)" -v "${PWD}/static-dvd-site-generator/index.js:/usr/src/app/index.js$(MOUNT_OPTION)" -e DEBUG=$(DEBUG) -t $(IMAGE_NAME):$(VERSION) bash -c '{ node scripts/genera_footer.js || { echo "WARNING: generazione footer fallita, uso la riserva scripts/footer_fallback.png" >&2; mkdir -p build/img; cp scripts/footer_fallback.png build/img/footer.png; } } && npm run build'
 
 bash: check-executor ## shell interattiva nel container del generatore
-	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint /bin/bash -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -t $(IMAGE_NAME):$(VERSION)
+	${EXECUTOR} run --rm -i $(USERNS_OPTION) --entrypoint /bin/bash -v "${PWD}/dvd:/usr/src/app/dvd$(MOUNT_OPTION)" -v "${PWD}/dati:/usr/src/app/dati$(MOUNT_OPTION)" -v "${PWD}/lib:/usr/src/app/lib$(MOUNT_OPTION)" -v "${PWD}/assets:/usr/src/app/assets$(MOUNT_OPTION)" -v "${PWD}/build:/usr/src/app/build$(MOUNT_OPTION)" -v "${PWD}/static-dvd-site-generator/index.js:/usr/src/app/index.js$(MOUNT_OPTION)" -t $(IMAGE_NAME):$(VERSION)
 
 init: check-executor ## costruisce l'immagine container col tuo uid/gid (serve solo se cambiano le dipendenze npm)
 	${EXECUTOR} build --build-arg USER_ID=$(shell id -u) --build-arg GROUP_ID=$(shell id -g) -t $(IMAGE_NAME):$(VERSION) -t $(IMAGE_NAME):latest .

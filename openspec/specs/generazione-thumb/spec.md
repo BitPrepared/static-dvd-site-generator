@@ -48,22 +48,26 @@ NON completare "con successo" lasciando thumb mancanti.
 - **THEN** la build fallisce indicando quel file, senza fermarsi in
   silenzio su thumb mancanti
 
-### Requirement: Thumb del fotogruppo a larghezza piena
+### Requirement: Thumb a larghezza piena per le foto grandi
 
-La thumb di `reparto/fotogruppo.<ext>` SHALL avere larghezza 650 px con
-altezza in proporzione (la home la pubblica a tutta colonna), diversa dai
-thumb piccoli della griglia reparto. Il patto "i thumb esistenti non si
-rigenerano" MUST NON impedirne l'aggiornamento: quando il file sorgente è
-presente, la thumb viene ricreata dal contenuto corrente a ogni build.
+Le foto pubblicate a tutta colonna — `reparto/fotogruppo.<ext>` (home) e
+`documenti/materiale/staff/foto-staff.<ext>` (pagina staff) — SHALL avere
+una thumb con larghezza 650 px e altezza in proporzione, diversa dai thumb
+piccoli delle griglie. Il patto "i thumb esistenti non si rigenerano" MUST
+NON impedirne l'aggiornamento: quando il file sorgente è presente, la thumb
+viene ricreata dal contenuto corrente a ogni build. Un fallimento di queste
+generazioni SHALL comportarsi come gli altri thumb: exit != 0 con errore
+reale e file coinvolto, mai completamento silenzioso senza thumb.
 
-#### Scenario: prima build con la foto di gruppo
-- **WHEN** `reparto/` contiene `fotogruppo.jpg` senza thumb e si lancia la
-  build
-- **THEN** nasce `thumb_fotogruppo.jpg` larga 650 con altezza proporzionale,
-  mentre i codici ragazzi della griglia restano con i thumb da 150
+#### Scenario: prima build con le foto grandi
+- **WHEN** `reparto/` contiene `fotogruppo.jpg` e `staff/` contiene
+  `foto-staff.jpg`, entrambe senza thumb, e si lancia la build
+- **THEN** nascono `thumb_fotogruppo.jpg` e `thumb_foto-staff.jpg` larghe
+  650 con altezza proporzionale, mentre i codici ragazzi della griglia
+  restano con i thumb da 150
 
-#### Scenario: foto di gruppo sostituita
-- **WHEN** arriva una nuova `fotogruppo.jpg` (o sul disco resta una vecchia
-  thumb) e si rilancia la build
+#### Scenario: foto grande sostituita
+- **WHEN** arriva una nuova `fotogruppo.jpg` o `foto-staff.jpg` (o sul
+  disco resta una vecchia thumb) e si rilancia la build
 - **THEN** la thumb viene rigenerata dalla foto corrente: quella precedente
   non sopravvive in versione ridotta
