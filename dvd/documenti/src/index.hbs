@@ -28,10 +28,17 @@ subtitle: Come recuperare i software usati al campo
         <li><a href="{{rootPath}}blog/index.html" target="_blank">Guarda il blog pubblicato durante il campo</a></li>
     </ul> -->
 
-    <span class="titolo">Video Campo</span>
+    {{!-- i materiali dei documenti generali arrivano dal json
+          dati/materialeDocumentiGenerali.json (nei metadati come "documenti"):
+          una sezione per ogni voce, link generati dai files[] dichiarati --}}
+    {{#each documenti}}
+    <span class="titolo">{{title}}</span>
     <ul>
-        <li><a href="{{rootPath}}documenti/ricordo/video_costigiola_2025.avi" target="_blank">ricordo campo</a></li>
+        {{#each files}}
+        <li><a href="{{../../rootPath}}documenti/{{../dir}}/{{filename}}" target="_blank">{{description}}</a></li>
+        {{/each}}
     </ul>
+    {{/each}}
 
 </div>
 <div id="footer">

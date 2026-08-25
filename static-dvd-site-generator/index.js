@@ -178,6 +178,7 @@ async function main() {
     menu: menu,
     squadriglie: squadriglie,
     esercitazioni: esercitazioni.templateVar(),
+    documenti: materialeDocumentiGenerali,
     fotosrc: path.join(outputdir, 'diariofotografico/foto'),
     categories: categories,
     excludeFileToSync: ['.DS_Store', 'Thumbs.db','.gitignore'],
