@@ -44,6 +44,9 @@ test('cartella_libera: i file presenti finiscono in files[], la cartella piena n
     // files[] riempito col contenuto reale, ordinato: il template linka questi
     assert.deepEqual(sezione.materiale[0].files.map((f) => f.filename),
       ['REV02.pdf', 'presentazione.odp']);
+    // etichetta leggibile: niente estensione, underscore -> spazi
+    assert.deepEqual(sezione.materiale[0].files.map((f) => f.description),
+      ['REV02', 'presentazione']);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

@@ -27,7 +27,12 @@ function riempiCartellaLibera(materiale) {
       ? fs.readdirSync(dirCompleta)
           .filter((f) => fs.statSync(path.join(dirCompleta, f)).isFile())
           .sort()
-          .map((f) => ({ filename: f, description: f }))
+          .map((f) => ({
+            filename: f,
+            // etichetta leggibile: senza estensione e con gli underscore
+            // come spazi (es. "presentazione_finale.odp" -> "presentazione finale")
+            description: path.basename(f, path.extname(f)).replace(/_/g, ' ')
+          }))
       : [];
   });
 }
