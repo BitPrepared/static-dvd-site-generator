@@ -1,0 +1,35 @@
+---
+layout: base.html
+subtitle: Sq. ##NAMESQ## ##IDSQUADRIGLIERE##
+---
+
+<div id="head">
+    <a href="{{rootPath}}index.html">
+        <img src="{{rootPath}}img/starwars.png" width="760" height="300" border="0" />
+    </a>
+</div>
+<div id="content">
+    <table width="760" border="0" align="center">
+        <tr align="left">
+            <td height="128" colspan="5" valign="middle" class="menu">
+                {{!-- scheda individuale ANONIMA (change iniziali-squadriglieri-anonimi):
+                      solo codice, foto segnaletica cliccabile/ingrandibile e
+                      iniziali puntate. Nessun dato anagrafico. --}}
+                <p align="center">
+                    <a href="{{rootPath}}angolisq/reparto/##FOTOINTERA##" target="_blank">
+                        <img alt="Foto segnaletica ##IDSQUADRIGLIERE##" src="{{rootPath}}angolisq/reparto/thumb_##FOTOINTERA##" border="1"></img>
+                    </a>
+                </p>
+                <p align="center">
+                    <font size="3"><strong>##IDSQUADRIGLIERE##{{#if squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.ini}} &mdash; {{squadriglie.##NAMESQ##.members.##IDSQUADRIGLIERE##.ini}}{{/if}}</strong></font>
+                    <br/>
+                    <font size="1">(clicca sulla foto per ingrandirla)</font>
+                </p>
+                <p><font size="2">Torna alla <a href="##NAMESQ##.html">Squadriglia ##NAMESQ##</a></font></p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="footer">
+    <img src="{{rootPath}}img/footer.png" width="760" height="46"></img>
+</div>
