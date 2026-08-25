@@ -113,8 +113,12 @@ test('griglia (anonima): schede individuali minime, member annotati col proprio 
       'la griglia itera i member');
     assert.match(sq, /\{\{#if this\.nome\}\}<li><a href="\{\{@key\}\}\.html">/,
       'chi ha il nome resta un link di testo');
-    assert.match(sq, /<a href="\{\{@key\}\}\.html"[^>]*><img [^>]*angolisq\/reparto\/\{\{this\.fotosegn\}\}/,
-      'il ramo senza nome e\' un link alla scheda col thumb annotato');
+    // ramo anonimo: solo elenco testuale (ini o codice) che linka la scheda;
+    // le foto segnaletiche stanno nella scheda, non in pagina
+    assert.match(sq, /<a href="\{\{@key\}\}\.html"[^>]*>\{\{#if this\.ini\}\}\{\{this\.ini\}\}/,
+      'il ramo senza nome e\' un link di testo alle iniziali');
+    assert.doesNotMatch(sq, /<img[^>]*fotosegn/,
+      'nessuna foto segnaletica inline nella pagina squadriglia');
   } finally {
     if (ripristina) ripristina();
     fs.rmSync(tmp, { recursive: true, force: true });

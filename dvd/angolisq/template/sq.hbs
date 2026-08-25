@@ -20,7 +20,10 @@ subtitle: Angoli di sq. ##NAMESQ##
                     {{!-- anonimo (change iniziali-squadriglieri-anonimi): foto col suo codice
                           nell'alt + dicitura con le iniziali puntate dal json; senza foto o
                           senza ini la voce resta quella di prima --}}
-                    {{#if this.nome}}<li><a href="{{@key}}.html">{{this.nome}} {{this.cognome}}</a></li>{{else}}{{#if this.hafoto}}<li><a href="{{@key}}.html" title="Vai alla foto di {{@key}}"><img alt="Foto segnaletica {{@key}}" src="{{../rootPath}}angolisq/reparto/{{this.fotosegn}}" border="1"></img>{{#if this.ini}}&nbsp;<strong>{{this.ini}}</strong>{{/if}}</a></li>{{/if}}{{/if}}
+                    {{!-- anonimo: solo l'elenco testuale (iniziali puntate o
+                          codice se mancano) come link alla scheda individuale,
+                          dove sta la foto segnaletica ingrandibile --}}
+                    {{#if this.nome}}<li><a href="{{@key}}.html">{{this.nome}} {{this.cognome}}</a></li>{{else}}{{#if this.hafoto}}<li><a href="{{@key}}.html" title="Vai alla foto di {{@key}}">{{#if this.ini}}{{this.ini}}{{else}}{{@key}}{{/if}}</a></li>{{/if}}{{/if}}
                     {{/each}}
                 </ul>
                 <p>
