@@ -74,7 +74,9 @@ function loggerRaccoglitore() {
 // dati/squadriglie.example-anonima.json). La pagina squadriglia scritta da
 // build() e' un template handlebars: la griglia itera {{this.fotosegn}}
 // che la build annota sui member; il rendering avviene nel generatore.
-test('griglia (anonima): niente pagine individuali, member annotati col proprio thumb', async () => {
+// Con la change iniziali-squadriglieri-anonimi ogni ragazzo con foto ha
+// ANCHE una scheda individuale minima (codice + foto ingrandibile).
+test('griglia (anonima): schede individuali minime, member annotati col proprio thumb', async () => {
   const ripristina = gmDisponibile ? null : installaStubGm();
   const tmp = copiaIsolata({
     'materiale/reparto/pz1_oro.jpg': JPEG_1X1,
@@ -90,8 +92,15 @@ test('griglia (anonima): niente pagine individuali, member annotati col proprio 
 
     const src = fs.readdirSync(path.join(tmp, 'src')).sort();
     assert.ok(src.includes('oro.hbs'), 'la pagina della squadriglia esiste');
-    assert.ok(!src.includes('pz1_oro.hbs') && !src.includes('gp1_oro.hbs'),
-      'nessuna pagina individuale per i soli codici');
+    for (const codice of ['pz1_oro.hbs', 'gp1_oro.hbs']) {
+      assert.ok(src.includes(codice), `scheda individuale anonima: ${codice}`);
+      const contenuto = fs.readFileSync(path.join(tmp, 'src', codice), 'utf8');
+      assert.match(contenuto, /reparto\/(thumb_)?[a-z0-9_]+\.(jpg|png)/,
+        `${codice}: foto (intera o thumb) presente`);
+      assert.match(contenuto, /oro\.html/, `${codice}: ritorno alla squadriglia`);
+      assert.doesNotMatch(contenuto, /[Nn]ominativo|[Ii]ndirizzo|[Tt]elefono/,
+        `${codice}: nessun campo anagrafico nella scheda anonima`);
+    }
 
     // annotazioni per la griglia: estensione vera per ogni codice
     assert.equal(squadriglie.oro.members.pz1_oro.hafoto, true);
@@ -104,8 +113,8 @@ test('griglia (anonima): niente pagine individuali, member annotati col proprio 
       'la griglia itera i member');
     assert.match(sq, /\{\{#if this\.nome\}\}<li><a href="\{\{@key\}\}\.html">/,
       'chi ha il nome resta un link di testo');
-    assert.match(sq, /angolisq\/reparto\/\{\{this\.fotosegn\}\}/,
-      'il ramo senza nome punta al thumb annotato');
+    assert.match(sq, /<a href="\{\{@key\}\}\.html"[^>]*><img [^>]*angolisq\/reparto\/\{\{this\.fotosegn\}\}/,
+      'il ramo senza nome e\' un link alla scheda col thumb annotato');
   } finally {
     if (ripristina) ripristina();
     fs.rmSync(tmp, { recursive: true, force: true });

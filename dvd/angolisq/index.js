@@ -207,17 +207,29 @@ Angolisq.prototype.build = async function () {
       const filename = keyM;
 
       // foto segnaletica importata per questo codice? annota sul member ciò
-      // che serve alla pagina squadriglia (griglia con estensione vera);
-      // nel json su disco non finisce nulla
+      // che serve alla pagina squadriglia (griglia con estensione vera) e
+      // alla sua scheda (foto intera ingrandibile); nel json su disco non
+      // finisce nulla
       const foto = fotoReparto(dirReparto, filename);
       squadrigliere.hafoto = !!foto;
       squadrigliere.fotosegn = foto ? ('thumb_' + foto) : '';
+      squadrigliere.fotointera = foto || '';
       this.codiciAttesiReparto.add(filename);
 
       // la scheda individuale nasce solo dai member con campo nome:
-      // in modalità anonima i member sono soli codici ({}) e la pagina
-      // squadriglia mostra solo la griglia di foto codificate
+      // in modalità anonima i member sono soli codici e ogni ragazzo con
+      // foto ha una scheda MINIMA (codice + foto ingrandibile + iniziali),
+      // raggiunta dalla griglia della pagina squadriglia
       if (!squadrigliere.nome) {
+        if (!squadrigliere.hafoto) {
+          continue;
+        }
+        var contentsAnonimo = fs.readFileSync(path.join(__dirname, 'template/squadrigliere-anonimo.hbs'), 'utf8');
+        contentsAnonimo = contentsAnonimo.replace(new RegExp('##NAMESQ##', 'g'), sqname);
+        contentsAnonimo = contentsAnonimo.replace(new RegExp('##IDSQUADRIGLIERE##', 'g'), filename);
+        contentsAnonimo = contentsAnonimo.replace(new RegExp('##FOTOINTERA##', 'g'), squadrigliere.fotointera);
+        fsextra.ensureDirSync(path.join(__dirname, 'src/'));
+        fs.writeFileSync(path.join(__dirname, 'src/' + filename + '.hbs'), contentsAnonimo);
         continue;
       }
       this.logger.info('found: ' + filename);

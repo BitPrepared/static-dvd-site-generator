@@ -200,6 +200,32 @@ test('urli dinamici: tutti i file <sq>.<ext> e <sq>_N.<ext> finiscono sul json d
   }
 });
 
+test('scheda anonima: dalla griglia si raggiunge la pagina del ragazzo con la foto intera', async () => {
+  const ripristina = gmDisponibile ? null : installaStubGm();
+  const tmp = copiaIsolata({
+    'materiale/reparto/ca1_blu.jpg': JPEG_1X1
+  });
+  try {
+    const Angolisq = require(path.join(tmp, 'index.js'));
+    const squadriglie = { blu: { name: 'blu', members: { ca1_blu: { ini: 'C. A.' } } } };
+    await new Angolisq(loggerMuto(), squadriglie, []).build();
+
+    // la build genera la pagina individuale ANONIMA dal template dedicato
+    const scheda = path.join(tmp, 'src', 'ca1_blu.hbs');
+    assert.ok(fs.existsSync(scheda), 'deve esistere la scheda anonima del ragazzo');
+    const contenuto = fs.readFileSync(scheda, 'utf8');
+    assert.match(contenuto, /reparto\/ca1_blu\.jpg/, 'link alla foto intera');
+    assert.match(contenuto, /thumb_ca1_blu\.jpg/, 'thumb come anteprima');
+    assert.match(contenuto, /blu\.html/, 'ritorno alla squadriglia');
+
+    // il member porta l'annotazione per la griglia-link di sq.hbs
+    assert.equal(squadriglie.blu.members.ca1_blu.fotointera, 'ca1_blu.jpg');
+  } finally {
+    if (ripristina) ripristina();
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test('immagine corrotta: la build fallisce con errore reale + file, senza crash su logger', async () => {
   const ripristina = gmDisponibile
     ? null
